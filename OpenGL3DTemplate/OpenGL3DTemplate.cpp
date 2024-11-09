@@ -17,6 +17,10 @@ float camYaw = 0.0f, camPitch = -0.2f;
 enum View { FREE_VIEW, TOP_VIEW, SIDE_VIEW, FRONT_VIEW };
 View currentView = FREE_VIEW;
 
+//functions signatures
+void InitializeGLUT(int argc, char** argv);
+void InitializeCallbacks();
+void InitializeOpenGL();
 
 void DrawWall(float x, float y, float z, float width, float height, float thickness) {
     glPushMatrix();
@@ -134,20 +138,30 @@ void Anim() {
 }
 
 void main(int argc, char** argv) {
-    glutInit(&argc, argv);
 
+    InitializeGLUT(argc, argv);
+    InitializeCallbacks();
+    InitializeOpenGL();
+    glutMainLoop();
+    glutMainLoop();
+}
+
+void InitializeGLUT(int argc, char** argv) {
+    glutInit(&argc, argv);
     glutInitWindowSize(xCord, yCord);
     glutInitWindowPosition(150, 50);
-
     glutCreateWindow("Game");
+    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);
+}
+
+void InitializeCallbacks() {
     glutDisplayFunc(Display);
     glutIdleFunc(Anim);
-
     glutKeyboardFunc(Keyboard);
+}
 
-    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);
+void InitializeOpenGL() {
     glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
-
     glEnable(GL_DEPTH_TEST);
 
     glMatrixMode(GL_PROJECTION);
@@ -157,5 +171,4 @@ void main(int argc, char** argv) {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     gluLookAt(camX, camY, camZ, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-    glutMainLoop();
 }
