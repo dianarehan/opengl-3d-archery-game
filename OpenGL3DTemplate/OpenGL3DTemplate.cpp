@@ -1,4 +1,6 @@
+#include <stdio.h>
 #include <glut.h>
+#include <math.h>
 
 float rotAng;
 //screen size
@@ -9,12 +11,61 @@ const float groundSize = 5.0f;
 const float wallHeight = 3.0f;
 const float wallThickness = 0.1f;
 
+//camera variables for free movement and rotation
+float camX = 0.0f, camY = 2.0f, camZ = 6.0f;
+float camYaw = 0.0f, camPitch = 0.0f;
+
+
 void DrawWall(float x, float y, float z, float width, float height, float thickness) {
     glPushMatrix();
     glTranslatef(x, y, z);
     glScalef(width, height, thickness);
     glutSolidCube(1);
     glPopMatrix();
+}
+
+void Keyboard(unsigned char key, int x, int y) {
+    const float moveSpeed = 0.1f;
+    const float turnSpeed = 0.05f;
+
+    switch (key) {
+    case 'w': //z positive
+        camX += moveSpeed * sin(camYaw);
+        camZ -= moveSpeed * cos(camYaw);
+        break;
+    case 's': //z negative
+        camX -= moveSpeed * sin(camYaw);
+        camZ += moveSpeed * cos(camYaw);
+        break;
+    case 'a': //x negative
+        camX -= moveSpeed * cos(camYaw);
+        camZ -= moveSpeed * sin(camYaw);
+        break;
+    case 'd': //x positive
+        camX += moveSpeed * cos(camYaw);
+        camZ += moveSpeed * sin(camYaw);
+        break;
+    case 'q': //y positive
+        camY += moveSpeed;
+        break;
+    case 'e': //y negative
+        camY -= moveSpeed;
+        break;
+    case 'j': //rotate on positive y
+        camYaw -= turnSpeed;
+        break;
+    case 'l': //rotate on negative y
+        camYaw += turnSpeed;
+        break;
+    case 'i': //rotate on positive x
+        camPitch += turnSpeed;
+        break;
+    case 'k': //rotate on negative x
+        camPitch -= turnSpeed;
+        break;
+    }
+
+    glutPostRedisplay();
 }
 
 void DrawGround(float x, float y, float z, float size) {
@@ -28,7 +79,11 @@ void DrawGround(float x, float y, float z, float size) {
 void Display(void) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    
+    // Set the camera
+    glLoadIdentity();
+    gluLookAt(camX, camY, camZ, camX + sin(camYaw), camY + sin(camPitch), camZ - cos(camYaw), 0.0f, 1.0f, 0.0f);
+
+
     glColor3f(0.6f, 0.6f, 0.6f);
 	DrawGround(0.0f, 0.0f, 0.0f, groundSize);
 
@@ -58,6 +113,8 @@ void main(int argc, char** argv) {
     glutDisplayFunc(Display);
     glutIdleFunc(Anim);
 
+    glutKeyboardFunc(Keyboard);
+
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);
     glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
 
@@ -69,6 +126,6 @@ void main(int argc, char** argv) {
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    gluLookAt(0.0f, 2.0f, 5.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+    gluLookAt(camX, camY, camZ, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
     glutMainLoop();
 }
