@@ -30,9 +30,8 @@ void Display(void) {
 
     
     glColor3f(0.6f, 0.6f, 0.6f);
-	DrawGround(0.0f, -wallHeight / 2, 0.0f, groundSize);
+	DrawGround(0.0f, 0.0f, 0.0f, groundSize);
 
-    
     glColor3f(0.8f, 0.8f, 0.8f);
     DrawWall(0.0f, wallHeight / 2, -groundSize / 2, groundSize, wallHeight, wallThickness); //back
     glColor3f(0.9f, 0.9f, 0.8f);
