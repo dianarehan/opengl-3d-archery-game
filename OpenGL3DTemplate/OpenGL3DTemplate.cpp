@@ -65,9 +65,18 @@ void Keyboard(unsigned char key, int x, int y) {
     case 'k': //rotate on negative x
         camPitch -= turnSpeed;
         break;
-    case 'f': // switch to free view
+    case 'f': //free view
         currentView = FREE_VIEW;
         break;
+	case 't': //top view
+		currentView = TOP_VIEW;
+		break;
+	case 'y': //side view
+		currentView = SIDE_VIEW;
+		break;
+	case 'u': //front view
+		currentView = FRONT_VIEW;
+		break;
     }
 	printf("camX: %f, camY: %f, camZ: %f, camYaw: %f, camPitch: %f\n", camX, camY, camZ, camYaw, camPitch);
     glutPostRedisplay();
@@ -124,23 +133,6 @@ void Anim() {
     glutPostRedisplay();
 }
 
-void Mouse(int button, int state, int x, int y) {
-    if (state == GLUT_DOWN) {
-        switch (button) {
-        case GLUT_LEFT_BUTTON:
-            currentView = TOP_VIEW;
-            break;
-        case GLUT_MIDDLE_BUTTON:
-            currentView = SIDE_VIEW;
-            break;
-        case GLUT_RIGHT_BUTTON:
-            currentView = FRONT_VIEW;
-            break;
-        }
-        glutPostRedisplay();
-    }
-}
-
 void main(int argc, char** argv) {
     glutInit(&argc, argv);
 
@@ -150,7 +142,6 @@ void main(int argc, char** argv) {
     glutCreateWindow("Game");
     glutDisplayFunc(Display);
     glutIdleFunc(Anim);
-    glutMouseFunc(Mouse);
 
     glutKeyboardFunc(Keyboard);
 
