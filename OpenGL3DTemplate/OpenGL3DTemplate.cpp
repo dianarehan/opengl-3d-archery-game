@@ -1,6 +1,8 @@
 #include <glut.h>
 
 float rotAng;
+//screen size
+int xCord = 1000, yCord = 700;
 
 void Display(void) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -31,8 +33,8 @@ void Anim() {
 void main(int argc, char** argv) {
 	glutInit(&argc, argv);
 
-	glutInitWindowSize(300, 300);
-	glutInitWindowPosition(150, 150);
+	glutInitWindowSize(xCord, yCord);
+	glutInitWindowPosition(150, 50);
 
 	glutCreateWindow("OpenGL - 3D Template");
 	glutDisplayFunc(Display);
