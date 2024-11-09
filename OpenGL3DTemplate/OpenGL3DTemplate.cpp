@@ -4,54 +4,72 @@ float rotAng;
 //screen size
 int xCord = 1000, yCord = 700;
 
-void Display(void) {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+// Ground and wall dimensions
+const float groundSize = 5.0f;
+const float wallHeight = 3.0f;
+const float wallThickness = 0.1f;
 
+void DrawWall(float x, float y, float z, float width, float height, float thickness) {
+    glPushMatrix();
+    glTranslatef(x, y, z);
+    glScalef(width, height, thickness);
+    glutSolidCube(1);
+    glPopMatrix();
+}
+
+void DrawGround(float x, float y, float z, float size) {
 	glPushMatrix();
-	glRotatef(rotAng, 0, 1, 0);
-	glColor3f(0.0f, 0.0f, 0.0f);
+	glTranslatef(x, y, z);
+	glScalef(size, 0.1f, size);
 	glutSolidCube(1);
 	glPopMatrix();
+}
 
-	glPushMatrix();
-	glRotatef(-rotAng, 0, 1, 0);
-	glTranslatef(2, 0, 0);
-	glRotatef(rotAng, 1, 0, 0);
-	glColor3f(0.5f, 0.5f, 0.5f);
-	glutSolidSphere(0.5, 25, 25);
-	glPopMatrix();
+void Display(void) {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glFlush();
+    // Draw ground
+    glColor3f(0.6f, 0.6f, 0.6f);
+	DrawGround(0.0f, -wallHeight / 2, 0.0f, groundSize);
+
+    // Draw walls
+    glColor3f(0.8f, 0.8f, 0.8f);
+    DrawWall(0.0f, wallHeight / 2, -groundSize / 2, groundSize, wallHeight, wallThickness); // Back wall
+    glColor3f(0.9f, 0.9f, 0.8f);
+    DrawWall(-groundSize / 2, wallHeight / 2, 0.0f, wallThickness, wallHeight, groundSize); // Left wall
+    glColor3f(0.8f, 0.7f, 0.7f);
+    DrawWall(groundSize / 2, wallHeight / 2, 0.0f, wallThickness, wallHeight, groundSize); // Right wall
+
+    glFlush();
 }
 
 void Anim() {
-	rotAng += 0.01;
+    rotAng += 0.01;
 
-	glutPostRedisplay();
+    glutPostRedisplay();
 }
 
 void main(int argc, char** argv) {
-	glutInit(&argc, argv);
+    glutInit(&argc, argv);
 
-	glutInitWindowSize(xCord, yCord);
-	glutInitWindowPosition(150, 50);
+    glutInitWindowSize(xCord, yCord);
+    glutInitWindowPosition(150, 50);
 
-	glutCreateWindow("OpenGL - 3D Template");
-	glutDisplayFunc(Display);
-	glutIdleFunc(Anim);
+    glutCreateWindow("Game");
+    glutDisplayFunc(Display);
+    glutIdleFunc(Anim);
 
-	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);
-	glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);
+    glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
 
-	glEnable(GL_DEPTH_TEST);
+    glEnable(GL_DEPTH_TEST);
 
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective(45.0f, 300 / 300, 0.1f, 300.0f);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(45.0f, (float)xCord / (float)yCord, 0.1f, 300.0f);
 
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	gluLookAt(0.0f, 2.0f, 5.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-
-	glutMainLoop();
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    gluLookAt(0.0f, 2.0f, 5.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+    glutMainLoop();
 }
