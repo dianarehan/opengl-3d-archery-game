@@ -4,7 +4,7 @@ float rotAng;
 //screen size
 int xCord = 1000, yCord = 700;
 
-// Ground and wall dimensions
+//ground and wall dimensions
 const float groundSize = 5.0f;
 const float wallHeight = 3.0f;
 const float wallThickness = 0.1f;
@@ -28,17 +28,17 @@ void DrawGround(float x, float y, float z, float size) {
 void Display(void) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // Draw ground
+    
     glColor3f(0.6f, 0.6f, 0.6f);
 	DrawGround(0.0f, -wallHeight / 2, 0.0f, groundSize);
 
-    // Draw walls
+    
     glColor3f(0.8f, 0.8f, 0.8f);
-    DrawWall(0.0f, wallHeight / 2, -groundSize / 2, groundSize, wallHeight, wallThickness); // Back wall
+    DrawWall(0.0f, wallHeight / 2, -groundSize / 2, groundSize, wallHeight, wallThickness); //back
     glColor3f(0.9f, 0.9f, 0.8f);
-    DrawWall(-groundSize / 2, wallHeight / 2, 0.0f, wallThickness, wallHeight, groundSize); // Left wall
+    DrawWall(-groundSize / 2, wallHeight / 2, 0.0f, wallThickness, wallHeight, groundSize); //left
     glColor3f(0.8f, 0.7f, 0.7f);
-    DrawWall(groundSize / 2, wallHeight / 2, 0.0f, wallThickness, wallHeight, groundSize); // Right wall
+    DrawWall(groundSize / 2, wallHeight / 2, 0.0f, wallThickness, wallHeight, groundSize); //right
 
     glFlush();
 }
