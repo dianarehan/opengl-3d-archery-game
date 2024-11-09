@@ -10,10 +10,11 @@
 *.lib
 
 # Build directories
-/build
-/bin
-/Debug
-/Release
+/build/
+*/build/
+*/bin/
+*/Debug/
+*/Release/
 
 # CMake files
 CMakeFiles/
@@ -53,7 +54,33 @@ vendor/glew/
 vendor/glfw/
 vendor/glm/
 
-# Logs and temp files
+# Logs, temp, and custom build files
 *.log
 *.tmp
 *.temp
+*.recipe
+*.tlog
+*.rsp  # Response files
+*.lastbuildstate
+*.pch  # Precompiled header files
+
+# Specific for Visual Studio's intermediate files
+*.idb
+*.pdb
+
+# Additional output files (if applicable)
+*.ilk
+*.exp
+*.map
+*.manifest
+*.appx
+
+# Custom folders
+output/
+logs/
+temp/
+
+# Exclude other non-source files
+*.bak
+*.swp
+*.swo
