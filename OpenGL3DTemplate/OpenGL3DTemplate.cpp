@@ -10,6 +10,7 @@ int xCord = 1000, yCord = 700;
 const float groundSize = 5.0f;
 const float wallHeight = 3.0f;
 const float wallThickness = 0.1f;
+const float ringThickness = 3.0f;
 
 //camera variables for free movement and rotation
 float camX = 0.0f, camY = 2.0f, camZ = 5.5f;
@@ -22,11 +23,70 @@ void InitializeGLUT(int argc, char** argv);
 void InitializeCallbacks();
 void InitializeOpenGL();
 
+void DrawCircle(float x, float y, float radius) {
+    glLineWidth(ringThickness);
+    glBegin(GL_LINE_LOOP);
+    for (int i = 0; i < 360; i++) {
+        float theta = i * 3.14159f / 180.0f;
+        glVertex2f(x + radius * cos(theta), y + radius * sin(theta));
+    }
+    glEnd();
+    glLineWidth(1.0f);
+}
+
+void DrawOlympicRings() {
+    const float radius = 0.5f;
+    const float offset = 1.2f * radius;
+
+    glColor3f(0.0f, 0.0f, 1.0f); // Blue
+    DrawCircle(-offset, 0.0f, radius);
+
+    glColor3f(0.0f, 0.0f, 0.0f); // Black
+    DrawCircle(0.0f, 0.0f, radius);
+
+    glColor3f(1.0f, 0.0f, 0.0f); // Red
+    DrawCircle(offset, 0.0f, radius);
+
+    glColor3f(1.0f, 1.0f, 0.0f); // Yellow
+    DrawCircle(-offset / 2, -radius, radius);
+
+    glColor3f(0.0f, 1.0f, 0.0f); // Green
+    DrawCircle(offset / 2, -radius, radius);
+}
+
 void DrawWall(float x, float y, float z, float width, float height, float thickness) {
     glPushMatrix();
     glTranslatef(x, y, z);
     glScalef(width, height, thickness);
     glutSolidCube(1);
+    glPopMatrix();
+}
+
+void DrawWallWithRings(float x, float y, float z, float width, float height, float thickness, float rotationAngle = 0.0f) {
+    glPushMatrix();
+    glTranslatef(x, y, z);
+    glScalef(width, height, thickness);
+    glutSolidCube(1);
+    glPopMatrix();
+
+    glPushMatrix();
+    if (rotationAngle == 0.0f) {
+        // Back wall
+        glTranslatef(x, y, z + thickness / 2 + 0.01f); //slightly in front of the wall
+    }
+    else if (rotationAngle == 90.0f) {
+        // Left wall
+		glScaled(1.0f, 1.0f, -1.0f); //reflecting on z axis
+        glTranslatef(thickness / 2 - 0.06f, y, z); 
+    }
+    else if (rotationAngle == -90.0f) {
+        // Right wall
+		glScaled(1.0f, 1.0f, -1.0f); //reflecting on z axis
+        glTranslatef(-thickness / 2 + 0.06f, y, z); //slightly in front of the wall
+    }
+    glRotatef(rotationAngle, 0.0f, 1.0f, 0.0f); // Rotate the rings to align with the wall
+	glScaled(0.5f, 0.5f, 0.5f);
+    DrawOlympicRings();
     glPopMatrix();
 }
 
@@ -122,11 +182,11 @@ void Display(void) {
 	DrawGround(0.0f, 0.0f, 0.0f, groundSize);
 
     glColor3f(0.8f, 0.8f, 0.8f);
-    DrawWall(0.0f, wallHeight / 2, -groundSize / 2, groundSize, wallHeight, wallThickness); //back
+    DrawWallWithRings(0.0f, wallHeight / 2, -groundSize / 2, groundSize, wallHeight, wallThickness); //back
     glColor3f(0.9f, 0.9f, 0.8f);
-    DrawWall(-groundSize / 2, wallHeight / 2, 0.0f, wallThickness, wallHeight, groundSize); //left
+    DrawWallWithRings(-groundSize/2,  wallHeight / 2, 0.0f, wallThickness, wallHeight, groundSize, 90.0f); //left
     glColor3f(0.8f, 0.7f, 0.7f);
-    DrawWall(groundSize / 2, wallHeight / 2, 0.0f, wallThickness, wallHeight, groundSize); //right
+    DrawWallWithRings(groundSize/2 , wallHeight / 2, 0.0f, wallThickness, wallHeight, groundSize, -90.0f); //right
 
     glFlush();
 }
