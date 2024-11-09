@@ -12,8 +12,10 @@ const float wallHeight = 3.0f;
 const float wallThickness = 0.1f;
 
 //camera variables for free movement and rotation
-float camX = 0.0f, camY = 2.0f, camZ = 6.0f;
-float camYaw = 0.0f, camPitch = 0.0f;
+float camX = 0.0f, camY = 2.0f, camZ = 5.5f;
+float camYaw = 0.0f, camPitch = -0.2f;
+enum View { FREE_VIEW, TOP_VIEW, SIDE_VIEW, FRONT_VIEW };
+View currentView = FREE_VIEW;
 
 
 void DrawWall(float x, float y, float z, float width, float height, float thickness) {
@@ -63,8 +65,11 @@ void Keyboard(unsigned char key, int x, int y) {
     case 'k': //rotate on negative x
         camPitch -= turnSpeed;
         break;
+    case 'f': // switch to free view
+        currentView = FREE_VIEW;
+        break;
     }
-
+	printf("camX: %f, camY: %f, camZ: %f, camYaw: %f, camPitch: %f\n", camX, camY, camZ, camYaw, camPitch);
     glutPostRedisplay();
 }
 
@@ -76,13 +81,29 @@ void DrawGround(float x, float y, float z, float size) {
 	glPopMatrix();
 }
 
+void SetCamera() {
+    glLoadIdentity();
+    switch (currentView) {
+    case TOP_VIEW:
+        gluLookAt(0.0f, 10.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f);
+        break;
+    case SIDE_VIEW:
+        gluLookAt(10.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+        break;
+    case FRONT_VIEW:
+        gluLookAt(0.0f, 0.0f, 10.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+        break;
+    case FREE_VIEW:
+        gluLookAt(camX, camY, camZ, camX + sin(camYaw), camY + sin(camPitch), camZ - cos(camYaw), 0.0f, 1.0f, 0.0f);
+        break;
+    }
+}
+
 void Display(void) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // Set the camera
-    glLoadIdentity();
-    gluLookAt(camX, camY, camZ, camX + sin(camYaw), camY + sin(camPitch), camZ - cos(camYaw), 0.0f, 1.0f, 0.0f);
-
+	//update the camera freely or to one of the views
+    SetCamera();
 
     glColor3f(0.6f, 0.6f, 0.6f);
 	DrawGround(0.0f, 0.0f, 0.0f, groundSize);
@@ -103,6 +124,23 @@ void Anim() {
     glutPostRedisplay();
 }
 
+void Mouse(int button, int state, int x, int y) {
+    if (state == GLUT_DOWN) {
+        switch (button) {
+        case GLUT_LEFT_BUTTON:
+            currentView = TOP_VIEW;
+            break;
+        case GLUT_MIDDLE_BUTTON:
+            currentView = SIDE_VIEW;
+            break;
+        case GLUT_RIGHT_BUTTON:
+            currentView = FRONT_VIEW;
+            break;
+        }
+        glutPostRedisplay();
+    }
+}
+
 void main(int argc, char** argv) {
     glutInit(&argc, argv);
 
@@ -112,6 +150,7 @@ void main(int argc, char** argv) {
     glutCreateWindow("Game");
     glutDisplayFunc(Display);
     glutIdleFunc(Anim);
+    glutMouseFunc(Mouse);
 
     glutKeyboardFunc(Keyboard);
 
