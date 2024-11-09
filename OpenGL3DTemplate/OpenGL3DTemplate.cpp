@@ -12,6 +12,12 @@ const float wallHeight = 3.0f;
 const float wallThickness = 0.1f;
 const float ringThickness = 3.0f;
 
+//wall positions
+float backWallX = 0.0f, backWallY = wallHeight / 2, backWallZ = -groundSize / 2;
+float leftWallX = -groundSize / 2, leftWallY = wallHeight / 2, leftWallZ = 0.0f;
+float rightWallX = groundSize / 2, rightWallY = wallHeight / 2, rightWallZ = 0.0f;
+
+
 //camera variables for free movement and rotation
 float camX = 0.0f, camY = 2.0f, camZ = 5.5f;
 float camYaw = 0.0f, camPitch = -0.2f;
@@ -182,11 +188,11 @@ void Display(void) {
 	DrawGround(0.0f, 0.0f, 0.0f, groundSize);
 
     glColor3f(0.8f, 0.8f, 0.8f);
-    DrawWallWithRings(0.0f, wallHeight / 2, -groundSize / 2, groundSize, wallHeight, wallThickness); //back
+    DrawWallWithRings(backWallX, backWallY, backWallZ, groundSize, wallHeight, wallThickness); //back
     glColor3f(0.9f, 0.9f, 0.8f);
-    DrawWallWithRings(-groundSize/2,  wallHeight / 2, 0.0f, wallThickness, wallHeight, groundSize, 90.0f); //left
+    DrawWallWithRings(leftWallX, leftWallY, leftWallZ, wallThickness, wallHeight, groundSize, 90.0f); //left
     glColor3f(0.8f, 0.7f, 0.7f);
-    DrawWallWithRings(groundSize/2 , wallHeight / 2, 0.0f, wallThickness, wallHeight, groundSize, -90.0f); //right
+    DrawWallWithRings(rightWallX, rightWallY, rightWallZ, wallThickness, wallHeight, groundSize, -90.0f); //right
 
     glFlush();
 }
