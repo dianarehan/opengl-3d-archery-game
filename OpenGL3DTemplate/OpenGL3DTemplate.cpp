@@ -48,6 +48,65 @@ void DrawCircle(float x, float y, float radius) {
     glLineWidth(1.0f);
 }
 
+void DrawPlayer(float x, float y, float z) {
+    // Draw the body
+    glPushMatrix();
+    glTranslatef(x, y, z);
+    glColor3f(0.5f, 0.6f, 1.0f); // Blue color for the body
+    glScalef(0.5f, 1.0f, 0.2f);
+    glutSolidCube(1);
+    glPopMatrix();
+
+    // Draw the head
+    glPushMatrix();
+    glTranslatef(x, y + 0.75f, z);
+    glColor3f(1.0f, 0.8f, 0.6f); // Skin color for the head
+    glutSolidSphere(0.25f, 20, 20);
+    glPopMatrix();
+
+    // Draw the face (simple eyes and mouth)
+    glPushMatrix();
+    glTranslatef(x, y + 0.75f, z + 0.15f);
+    glColor3f(0.0f, 0.0f, 0.0f); // Black color for the eyes and mouth
+    glBegin(GL_POINTS);
+    glVertex3f(-0.05f, 0.05f, 0.0f); // Left eye
+    glVertex3f(0.05f, 0.05f, 0.0f);  // Right eye
+    glVertex3f(0.0f, -0.05f, 0.0f);  // Mouth
+    glEnd();
+    glPopMatrix();
+
+    // Draw the left leg
+    glPushMatrix();
+    glTranslatef(x - 0.15f, y - 0.75f, z);
+    glColor3f(0.0f, 0.0f, 1.0f); // Blue color for the legs
+    glScalef(0.2f, 0.5f, 0.2f);
+    glutSolidCube(1);
+    glPopMatrix();
+
+    // Draw the right leg
+    glPushMatrix();
+    glTranslatef(x + 0.15f, y - 0.75f, z);
+    glColor3f(0.0f, 0.0f, 1.0f); // Blue color for the legs
+    glScalef(0.2f, 0.5f, 0.2f);
+    glutSolidCube(1);
+    glPopMatrix();
+
+    // Draw the left hand
+    glPushMatrix();
+    glTranslatef(x - 0.35f, y, z);
+    glColor3f(1.0f, 0.8f, 0.6f); // Skin color for the hands
+    glScalef(0.2f, 0.5f, 0.2f);
+    glutSolidCube(1);
+    glPopMatrix();
+
+    // Draw the right hand
+    glPushMatrix();
+    glTranslatef(x + 0.35f, y, z);
+    glColor3f(1.0f, 0.8f, 0.6f); // Skin color for the hands
+    glScalef(0.2f, 0.5f, 0.2f);
+    glutSolidCube(1);
+    glPopMatrix();
+}
 void DrawOlympicRings() {
     const float radius = 0.5f;
     const float offset = 1.2f * radius;
@@ -192,8 +251,8 @@ void Display(void) {
 	//update the camera freely or to one of the views
     SetCamera();
 
-    glColor3f(0.6f, 0.6f, 0.6f);
-	DrawGround(0.0f, 0.0f, 0.0f, groundSize);
+    glColor3f(0.125f, 0.271f, 0.094f);
+    DrawGround(0.0f, 0.0f, 0.0f, groundSize); //ground
 
     glColor3f(0.8f, 0.8f, 0.8f);
     DrawWallWithRings(backWallX, backWallY, backWallZ, groundSize, wallHeight, wallThickness); //back
@@ -201,7 +260,9 @@ void Display(void) {
     DrawWallWithRings(leftWallX, leftWallY, leftWallZ, wallThickness, wallHeight, groundSize, 90.0f); //left
     glColor3f(0.8f, 0.7f, 0.7f);
     DrawWallWithRings(rightWallX, rightWallY, rightWallZ, wallThickness, wallHeight, groundSize, -90.0f); //right
+    glScalef(0.5f, 0.5f, 0.5f);
 
+    DrawPlayer(0.0f, 1.0f, 0.0f);
     glFlush();
 }
 
