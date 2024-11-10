@@ -63,6 +63,26 @@ void DrawPlayer(float x, float y, float z) {
     glColor3f(1.0f, 0.8f, 0.6f); // Skin color for the head
     glutSolidSphere(0.25f, 20, 20);
     glPopMatrix();
+    glPushMatrix();
+    glTranslatef(x - 0.1f, y + 0.85f, z + 0.2f); // Adjust position for left eye
+    glColor3f(0.0f, 0.0f, 0.0f); // Black color for the eyes
+    glutSolidSphere(0.05f, 10, 10); // Left eye
+    glPopMatrix();
+
+    // Draw the right eye
+    glPushMatrix();
+    glTranslatef(x + 0.1f, y + 0.85f, z + 0.2f); // Adjust position for right eye
+    glColor3f(0.0f, 0.0f, 0.0f); // Black color for the eyes
+    glutSolidSphere(0.05f, 10, 10); // Right eye
+    glPopMatrix();
+
+    // Draw the mouth
+    glPushMatrix();
+    glTranslatef(x, y + 0.7f, z + 0.25f); // Adjust position for the mouth
+    glColor3f(0.8f, 0.0f, 0.0f); // Red color for the mouth
+    glRotatef(180.0f, 1.0f, 0.0f, 0.0f); // Rotate to face forward
+    glutSolidTorus(0.02f, 0.08f, 10, 10); // Simple curved mouth (half-circle)
+    glPopMatrix();
 
     // Draw the left leg
     glPushMatrix();
