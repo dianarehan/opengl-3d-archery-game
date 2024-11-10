@@ -52,7 +52,7 @@ void DrawPlayer(float x, float y, float z) {
     // Draw the body
     glPushMatrix();
     glTranslatef(x, y, z);
-    glColor3f(0.5f, 0.6f, 1.0f); // Blue color for the body
+    glColor3f(0.5f, 0.6f, 1.0f);
     glScalef(0.5f, 1.0f, 0.2f);
     glutSolidCube(1);
     glPopMatrix();
@@ -62,17 +62,6 @@ void DrawPlayer(float x, float y, float z) {
     glTranslatef(x, y + 0.75f, z);
     glColor3f(1.0f, 0.8f, 0.6f); // Skin color for the head
     glutSolidSphere(0.25f, 20, 20);
-    glPopMatrix();
-
-    // Draw the face (simple eyes and mouth)
-    glPushMatrix();
-    glTranslatef(x, y + 0.75f, z + 0.15f);
-    glColor3f(0.0f, 0.0f, 0.0f); // Black color for the eyes and mouth
-    glBegin(GL_POINTS);
-    glVertex3f(-0.05f, 0.05f, 0.0f); // Left eye
-    glVertex3f(0.05f, 0.05f, 0.0f);  // Right eye
-    glVertex3f(0.0f, -0.05f, 0.0f);  // Mouth
-    glEnd();
     glPopMatrix();
 
     // Draw the left leg
@@ -93,20 +82,21 @@ void DrawPlayer(float x, float y, float z) {
 
     // Draw the left hand
     glPushMatrix();
-    glTranslatef(x - 0.35f, y, z);
+    glTranslatef(x - 0.35f, y+0.1, z);
     glColor3f(1.0f, 0.8f, 0.6f); // Skin color for the hands
-    glScalef(0.2f, 0.5f, 0.2f);
+    glScalef(0.2f, 0.6f, 0.2f);
     glutSolidCube(1);
     glPopMatrix();
 
     // Draw the right hand
     glPushMatrix();
-    glTranslatef(x + 0.35f, y, z);
+    glTranslatef(x + 0.35f, y+0.1, z);
     glColor3f(1.0f, 0.8f, 0.6f); // Skin color for the hands
-    glScalef(0.2f, 0.5f, 0.2f);
+    glScalef(0.2f, 0.6f, 0.2f);
     glutSolidCube(1);
     glPopMatrix();
 }
+
 void DrawOlympicRings() {
     const float radius = 0.5f;
     const float offset = 1.2f * radius;
