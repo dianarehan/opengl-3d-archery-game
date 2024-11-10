@@ -1,6 +1,9 @@
+#include <iostream>
 #include <stdio.h>
 #include <glut.h>
 #include <math.h>
+#include <irrKlang.h>
+using namespace irrklang;
 
 float rotAng;
 //screen size
@@ -208,8 +211,13 @@ void main(int argc, char** argv) {
     InitializeGLUT(argc, argv);
     InitializeCallbacks();
     InitializeOpenGL();
+    ISoundEngine* engine = createIrrKlangDevice();
+    if (!engine) {
+        std::cerr << "Could not initialize irrKlang!" << std::endl;
+    }
+    engine->play2D("bg_sound.wav", true);
     glutMainLoop();
-    glutMainLoop();
+    engine->drop();
 }
 
 void InitializeGLUT(int argc, char** argv) {
