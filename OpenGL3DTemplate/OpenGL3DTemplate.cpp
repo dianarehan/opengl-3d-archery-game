@@ -3,6 +3,7 @@
 #include <glut.h>
 #include <math.h>
 #include <irrKlang.h>
+#include <thread>
 using namespace irrklang;
 
 float rotAng;
@@ -31,6 +32,17 @@ View currentView = FREE_VIEW;
 void InitializeGLUT(int argc, char** argv);
 void InitializeCallbacks();
 void InitializeOpenGL();
+void playSound(const char* soundFile);
+
+//sound data
+ISoundEngine* engine;
+
+void InitializeSound(){
+    engine = createIrrKlangDevice();
+    if (!engine) {
+        std::cerr << "Could not initialize irrKlang!" << std::endl;
+    }
+}
 
 void DrawCircle(float x, float y, float radius) {
     glLineWidth(ringThickness);
@@ -207,15 +219,10 @@ void Anim() {
 }
 
 void main(int argc, char** argv) {
-
+	InitializeSound();
     InitializeGLUT(argc, argv);
     InitializeCallbacks();
     InitializeOpenGL();
-    ISoundEngine* engine = createIrrKlangDevice();
-    if (!engine) {
-        std::cerr << "Could not initialize irrKlang!" << std::endl;
-    }
-    engine->play2D("bg_sound.wav", true);
     glutMainLoop();
     engine->drop();
 }
@@ -246,3 +253,16 @@ void InitializeOpenGL() {
     glLoadIdentity();
     gluLookAt(camX, camY, camZ, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 }
+
+void playSound(const char* soundFile) {
+    if (engine) {
+        engine->play2D(soundFile, false, false, true);
+    }
+}
+
+/*std::thread soundThread1(playSound, "bg_sound.wav");
+    std::thread soundThread2(playSound, "lose.wav");
+
+    // Wait for the threads to finish
+    soundThread1.join();
+    soundThread2.join();*/
