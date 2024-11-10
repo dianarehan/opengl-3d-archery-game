@@ -81,8 +81,19 @@ void DrawPlayer(float x, float y, float z) {
     glTranslatef(x, y + 0.7f, z + 0.25f); // Adjust position for the mouth
     glColor3f(0.8f, 0.0f, 0.0f); // Red color for the mouth
     glRotatef(180.0f, 1.0f, 0.0f, 0.0f); // Rotate to face forward
-    glutSolidTorus(0.02f, 0.08f, 10, 10); // Simple curved mouth (half-circle)
+
+    // Draw half-circle mouth (smile)
+    glBegin(GL_POLYGON);
+    const int num_segments = 20; // Number of segments for a smooth curve
+    float radius = 0.08f; // Radius of the mouth
+    for (int i = 0; i <= num_segments; i++) {
+        float angle = (float)i / (float)num_segments * 3.14159f; // Half circle (180 degrees)
+        glVertex2f(radius * cos(angle), radius * sin(angle));
+    }
+    glEnd();
+
     glPopMatrix();
+
 
     // Draw the left leg
     glPushMatrix();
