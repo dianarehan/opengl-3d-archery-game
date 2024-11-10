@@ -21,7 +21,6 @@ float backWallX = 0.0f, backWallY = wallHeight / 2, backWallZ = -groundSize / 2;
 float leftWallX = -groundSize / 2, leftWallY = wallHeight / 2, leftWallZ = 0.0f;
 float rightWallX = groundSize / 2, rightWallY = wallHeight / 2, rightWallZ = 0.0f;
 
-
 //camera variables for free movement and rotation
 float camX = 0.0f, camY = 2.0f, camZ = 5.5f;
 float camYaw = 0.0f, camPitch = -0.2f;
@@ -33,16 +32,10 @@ void InitializeGLUT(int argc, char** argv);
 void InitializeCallbacks();
 void InitializeOpenGL();
 void playSound(const char* soundFile);
+void InitializeSound();
 
 //sound data
 ISoundEngine* engine;
-
-void InitializeSound(){
-    engine = createIrrKlangDevice();
-    if (!engine) {
-        std::cerr << "Could not initialize irrKlang!" << std::endl;
-    }
-}
 
 void DrawCircle(float x, float y, float radius) {
     glLineWidth(ringThickness);
@@ -257,6 +250,13 @@ void InitializeOpenGL() {
 void playSound(const char* soundFile) {
     if (engine) {
         engine->play2D(soundFile, false, false, true);
+    }
+}
+
+void InitializeSound() {
+    engine = createIrrKlangDevice();
+    if (!engine) {
+        std::cerr << "Could not initialize irrKlang!" << std::endl;
     }
 }
 
