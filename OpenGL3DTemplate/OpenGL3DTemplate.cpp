@@ -53,32 +53,32 @@ void DrawPlayer(float x, float y, float z) {
     glPushMatrix();
     glTranslatef(x, y, z);
     glColor3f(0.5f, 0.6f, 1.0f);
-    glScalef(0.5f, 1.0f, 0.2f);
+    glScalef(0.5f, 0.8f, 0.2f);
     glutSolidCube(1);
     glPopMatrix();
 
     // Draw the head
     glPushMatrix();
-    glTranslatef(x, y + 0.75f, z);
+    glTranslatef(x, y + 0.68f, z);
     glColor3f(1.0f, 0.8f, 0.6f); // Skin color for the head
     glutSolidSphere(0.25f, 20, 20);
     glPopMatrix();
     glPushMatrix();
-    glTranslatef(x - 0.1f, y + 0.85f, z + 0.2f); // Adjust position for left eye
+    glTranslatef(x - 0.1f, y + 0.75f, z + 0.2f); // Adjust position for left eye
     glColor3f(0.0f, 0.0f, 0.0f); // Black color for the eyes
     glutSolidSphere(0.05f, 10, 10); // Left eye
     glPopMatrix();
 
     // Draw the right eye
     glPushMatrix();
-    glTranslatef(x + 0.1f, y + 0.85f, z + 0.2f); // Adjust position for right eye
+    glTranslatef(x + 0.1f, y + 0.75f, z + 0.2f); // Adjust position for right eye
     glColor3f(0.0f, 0.0f, 0.0f); // Black color for the eyes
     glutSolidSphere(0.05f, 10, 10); // Right eye
     glPopMatrix();
 
     // Draw the mouth
     glPushMatrix();
-    glTranslatef(x, y + 0.7f, z + 0.25f); // Adjust position for the mouth
+    glTranslatef(x, y + 0.68f, z + 0.25f); // Adjust position for the mouth
     glColor3f(0.8f, 0.0f, 0.0f); // Red color for the mouth
     glRotatef(180.0f, 1.0f, 0.0f, 0.0f); // Rotate to face forward
 
@@ -94,37 +94,50 @@ void DrawPlayer(float x, float y, float z) {
 
     glPopMatrix();
 
-
     // Draw the left leg
     glPushMatrix();
-    glTranslatef(x - 0.15f, y - 0.75f, z);
+    glTranslatef(x - 0.15f, y - 0.7f, z);
     glColor3f(0.0f, 0.0f, 1.0f); // Blue color for the legs
-    glScalef(0.2f, 0.5f, 0.2f);
+    glScalef(0.2f, 0.6f, 0.2f);
     glutSolidCube(1);
     glPopMatrix();
 
     // Draw the right leg
     glPushMatrix();
-    glTranslatef(x + 0.15f, y - 0.75f, z);
+    glTranslatef(x + 0.15f, y - 0.7f, z);
     glColor3f(0.0f, 0.0f, 1.0f); // Blue color for the legs
-    glScalef(0.2f, 0.5f, 0.2f);
+    glScalef(0.2f, 0.6f, 0.2f);
     glutSolidCube(1);
     glPopMatrix();
 
     // Draw the left hand
     glPushMatrix();
-    glTranslatef(x - 0.35f, y+0.1, z);
+    glTranslatef(x - 0.30f, y+0.1, z);
     glColor3f(1.0f, 0.8f, 0.6f); // Skin color for the hands
-    glScalef(0.2f, 0.6f, 0.2f);
+    glScalef(0.1f, 0.6f, 0.2f);
     glutSolidCube(1);
     glPopMatrix();
 
     // Draw the right hand
     glPushMatrix();
-    glTranslatef(x + 0.35f, y+0.1, z);
+    glTranslatef(x + 0.30f, y+0.1, z);
     glColor3f(1.0f, 0.8f, 0.6f); // Skin color for the hands
-    glScalef(0.2f, 0.6f, 0.2f);
+    glScalef(0.1f, 0.6f, 0.2f);
     glutSolidCube(1);
+    glPopMatrix();
+
+    // Draw the left boxing glove
+    glPushMatrix();
+    glTranslatef(x - 0.35f, y - 0.2f, z);
+    glColor3f(1.0f, 0.0f, 0.0f); // Red color for the gloves
+    glutSolidSphere(0.15f, 20, 20);
+    glPopMatrix();
+
+    // Draw the right boxing glove
+    glPushMatrix();
+    glTranslatef(x + 0.35f, y - 0.2f, z);
+    glColor3f(1.0f, 0.0f, 0.0f); // Red color for the gloves
+    glutSolidSphere(0.15f, 20, 20);
     glPopMatrix();
 }
 
