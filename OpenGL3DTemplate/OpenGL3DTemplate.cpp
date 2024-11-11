@@ -112,94 +112,116 @@ void DrawBow(float x, float y, float z) {
     glPopMatrix();
 }
 
+void MovePlayer(float deltaTime) {
+    const float moveSpeed = 2.0f; // Adjust the speed as needed
+
+    if (moveLeft) {
+        playerX -= moveSpeed * deltaTime;
+        playerRotation = -90.0f; // Facing left
+    }
+    if (moveRight) {
+        playerX += moveSpeed * deltaTime;
+        playerRotation = 90.0f; // Facing right
+    }
+    if (moveForward) {
+        playerZ -= moveSpeed * deltaTime;
+        playerRotation = 180.0f; // Facing forward (positive Z)
+    }
+    if (moveBackward) {
+        playerZ += moveSpeed * deltaTime;
+        playerRotation = 0.0; // Facing backward
+    }
+}
+
 void DrawPlayer(float x, float y, float z) {
+    // Apply rotation based on playerRotation
+    glPushMatrix();
+    glTranslatef(x, y, z);
+    glRotatef(playerRotation, 0.0f, 1.0f, 0.0f); // Rotate player around Y-axis
 
     // Draw the body
     glPushMatrix();
-    glTranslatef(x, y, z);
     glColor3f(0.5f, 0.6f, 1.0f);
     glScalef(0.5f, 0.8f, 0.2f);
     glutSolidCube(1);
     glPopMatrix();
-    DrawBow(x - 0.35f, y, z); // Position the bow near the player's left hand
+
+    // Position the bow near the player's left hand
+    DrawBow(-0.35f, 0.0f, 0.0f);
+
     // Draw the head
     glPushMatrix();
-    glTranslatef(x, y + 0.68f, z);
+    glTranslatef(0.0f, 0.68f, 0.0f); // Adjust head position relative to the rotated player
     glColor3f(1.0f, 0.8f, 0.6f); // Skin color for the head
     glutSolidSphere(0.25f, 20, 20);
     glPopMatrix();
+
+    // Draw the left eye
     glPushMatrix();
-    glTranslatef(x - 0.1f, y + 0.75f, z + 0.2f); // Adjust position for left eye
-    glColor3f(0.0f, 0.0f, 0.0f); // Black color for the eyes
-    glutSolidSphere(0.05f, 10, 10); // Left eye
+    glTranslatef(-0.1f, 0.75f, 0.2f); // Position relative to head
+    glColor3f(0.0f, 0.0f, 0.0f);
+    glutSolidSphere(0.05f, 10, 10);
     glPopMatrix();
 
     // Draw the right eye
     glPushMatrix();
-    glTranslatef(x + 0.1f, y + 0.75f, z + 0.2f); // Adjust position for right eye
-    glColor3f(0.0f, 0.0f, 0.0f); // Black color for the eyes
-    glutSolidSphere(0.05f, 10, 10); // Right eye
+    glTranslatef(0.1f, 0.75f, 0.2f);
+    glColor3f(0.0f, 0.0f, 0.0f);
+    glutSolidSphere(0.05f, 10, 10);
     glPopMatrix();
 
     // Draw the mouth
     glPushMatrix();
-    glTranslatef(x, y + 0.68f, z + 0.25f); // Adjust position for the mouth
+    glTranslatef(0.0f, 0.68f, 0.25f); // Adjust position for the mouth
     glColor3f(0.8f, 0.0f, 0.0f); // Red color for the mouth
     glRotatef(180.0f, 1.0f, 0.0f, 0.0f); // Rotate to face forward
 
     // Draw half-circle mouth (smile)
     glBegin(GL_POLYGON);
-    const int num_segments = 20; // Number of segments for a smooth curve
-    float radius = 0.08f; // Radius of the mouth
+    const int num_segments = 20;
+    float radius = 0.08f;
     for (int i = 0; i <= num_segments; i++) {
-        float angle = (float)i / (float)num_segments * 3.14159f; // Half circle (180 degrees)
+        float angle = (float)i / (float)num_segments * 3.14159f;
         glVertex2f(radius * cos(angle), radius * sin(angle));
     }
     glEnd();
-
     glPopMatrix();
 
     // Draw the left leg
     glPushMatrix();
-    glTranslatef(x - 0.15f, y - 0.7f, z);
-    glColor3f(0.0f, 0.0f, 1.0f); // Blue color for the legs
+    glTranslatef(-0.15f, -0.7f, 0.0f);
+    glColor3f(0.0f, 0.0f, 1.0f);
     glScalef(0.2f, 0.6f, 0.2f);
     glutSolidCube(1);
     glPopMatrix();
 
     // Draw the right leg
     glPushMatrix();
-    glTranslatef(x + 0.15f, y - 0.7f, z);
-    glColor3f(0.0f, 0.0f, 1.0f); // Blue color for the legs
+    glTranslatef(0.15f, -0.7f, 0.0f);
+    glColor3f(0.0f, 0.0f, 1.0f);
     glScalef(0.2f, 0.6f, 0.2f);
     glutSolidCube(1);
     glPopMatrix();
 
     // Draw the left hand
     glPushMatrix();
-    glTranslatef(x - 0.30f, y+0.1, z);
-    glColor3f(1.0f, 0.8f, 0.6f); // Skin color for the hands
+    glTranslatef(-0.30f, 0.1f, 0.0f);
+    glColor3f(1.0f, 0.8f, 0.6f);
     glScalef(0.1f, 0.6f, 0.2f);
     glutSolidCube(1);
     glPopMatrix();
 
     // Draw the right hand
     glPushMatrix();
-    glTranslatef(x + 0.30f, y+0.1, z);
-    glColor3f(1.0f, 0.8f, 0.6f); // Skin color for the hands
+    glTranslatef(0.30f, 0.1f, 0.0f);
+    glColor3f(1.0f, 0.8f, 0.6f);
     glScalef(0.1f, 0.6f, 0.2f);
     glutSolidCube(1);
     glPopMatrix();
+
+    glPopMatrix(); // End rotation and translation for the entire player
 }
 
-void MovePlayer(float deltaTime) {
-    const float moveSpeed = 2.0f; // Adjust the speed as needed
-
-    if (moveLeft) playerX -= moveSpeed * deltaTime;
-    if (moveRight) playerX += moveSpeed * deltaTime;
-    if (moveForward) playerZ -= moveSpeed * deltaTime;
-    if (moveBackward) playerZ += moveSpeed * deltaTime;
-}
 
 void DrawOlympicRings() {
     const float radius = 0.5f;
