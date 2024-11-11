@@ -48,6 +48,45 @@ void DrawCircle(float x, float y, float radius) {
     glLineWidth(1.0f);
 }
 
+void DrawBow(float x, float y, float z) {
+    // Draw the main curve of the bow using a series of small line segments
+    glPushMatrix();
+    glTranslatef(x, y, z); // Position the bow relative to the player
+    glRotatef(270, 0.0f, 1.0f, 0.0f); // Rotate the bow on the y-axis
+    glRotatef(-90, 0.0f, 0.0f, 1.0f); // Rotate the bow on the x-axis
+    glColor3f(0.55f, 0.27f, 0.07f); // Brown color for the bow
+
+    glBegin(GL_LINE_STRIP); // Use a line strip to form a curve
+    float bowRadius = 0.4f;
+    for (int i = -9; i <= 9; i++) { // Draw half-circle to represent bow curve
+        float angle = (float)i / 10.0f * 3.14159f; // Half circle (180 degrees)
+        glVertex3f(bowRadius * cos(angle), bowRadius * sin(angle), 0.0f);
+    }
+    glEnd();
+
+    // Draw the bowstring
+    glBegin(GL_LINES);
+    glVertex3f(bowRadius, 0.0f, 0.0f);  // Top of the bow
+    glVertex3f(-bowRadius, 0.0f, 0.0f); // Bottom of the bow
+    glEnd();
+
+    // Draw the arrow
+    glColor3f(0.8f, 0.8f, 0.8f); // Gray color for the arrow
+    glBegin(GL_LINES);
+    glVertex3f(0.0f, 0.0f, 0.0f);  // Arrow start
+    glVertex3f(0.6f, 0.0f, 0.0f);  // Arrow end
+    glEnd();
+
+    // Draw the arrowhead
+    glBegin(GL_TRIANGLES);
+    glVertex3f(0.6f, 0.0f, 0.0f);  // Tip of the arrowhead
+    glVertex3f(0.55f, 0.05f, 0.0f); // Bottom left of the arrowhead
+    glVertex3f(0.55f, -0.05f, 0.0f); // Bottom right of the arrowhead
+    glEnd();
+
+    glPopMatrix();
+}
+
 void DrawPlayer(float x, float y, float z) {
     // Draw the body
     glPushMatrix();
@@ -56,7 +95,7 @@ void DrawPlayer(float x, float y, float z) {
     glScalef(0.5f, 0.8f, 0.2f);
     glutSolidCube(1);
     glPopMatrix();
-
+    DrawBow(x - 0.35f, y, z); // Position the bow near the player's left hand
     // Draw the head
     glPushMatrix();
     glTranslatef(x, y + 0.68f, z);
@@ -124,20 +163,6 @@ void DrawPlayer(float x, float y, float z) {
     glColor3f(1.0f, 0.8f, 0.6f); // Skin color for the hands
     glScalef(0.1f, 0.6f, 0.2f);
     glutSolidCube(1);
-    glPopMatrix();
-
-    // Draw the left boxing glove
-    glPushMatrix();
-    glTranslatef(x - 0.35f, y - 0.2f, z);
-    glColor3f(1.0f, 0.0f, 0.0f); // Red color for the gloves
-    glutSolidSphere(0.15f, 20, 20);
-    glPopMatrix();
-
-    // Draw the right boxing glove
-    glPushMatrix();
-    glTranslatef(x + 0.35f, y - 0.2f, z);
-    glColor3f(1.0f, 0.0f, 0.0f); // Red color for the gloves
-    glutSolidSphere(0.15f, 20, 20);
     glPopMatrix();
 }
 
