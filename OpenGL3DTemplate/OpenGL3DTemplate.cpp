@@ -27,6 +27,10 @@ float camYaw = 0.0f, camPitch = -0.2f;
 enum View { FREE_VIEW, TOP_VIEW, SIDE_VIEW, FRONT_VIEW };
 View currentView = FREE_VIEW;
 
+// Player position and rotation
+float playerX = 0.0f, playerY = 1.0f, playerZ = 0.0f;
+float playerRotation = 0.0f;
+
 //functions signatures
 void InitializeGLUT(int argc, char** argv);
 void InitializeCallbacks();
@@ -105,6 +109,7 @@ void DrawBow(float x, float y, float z) {
 }
 
 void DrawPlayer(float x, float y, float z) {
+
     // Draw the body
     glPushMatrix();
     glTranslatef(x, y, z);
@@ -321,6 +326,31 @@ void SetCamera() {
     }
 }
 
+void SpecialKeys(int key, int x, int y) {
+    const float moveSpeed = 0.1f;
+
+    switch (key) {
+    case GLUT_KEY_UP:
+        if(playerZ>=-groundSize + 6 * wallThickness)
+            playerZ -= moveSpeed;
+        break;
+    case GLUT_KEY_DOWN:
+		if (playerZ <= groundSize - 6 * wallThickness)
+            playerZ += moveSpeed;
+        break;
+    case GLUT_KEY_LEFT:
+		if (playerX >= -groundSize+6*wallThickness)
+            playerX -= moveSpeed;
+        break;
+    case GLUT_KEY_RIGHT:
+        if (playerX <= groundSize-6*wallThickness)
+            playerX += moveSpeed;
+        break;
+    }
+
+    glutPostRedisplay();
+}
+
 void Display(void) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -338,7 +368,7 @@ void Display(void) {
     DrawWallWithRings(rightWallX, rightWallY, rightWallZ, wallThickness, wallHeight, groundSize, -90.0f); //right
     glScalef(0.5f, 0.5f, 0.5f);
 
-    DrawPlayer(0.0f, 1.0f, 0.0f);
+    DrawPlayer(playerX, playerY, playerZ);
     glFlush();
 }
 
@@ -369,6 +399,7 @@ void InitializeCallbacks() {
     glutDisplayFunc(Display);
     glutIdleFunc(Anim);
     glutKeyboardFunc(Keyboard);
+    glutSpecialFunc(SpecialKeys);
 }
 
 void InitializeOpenGL() {
