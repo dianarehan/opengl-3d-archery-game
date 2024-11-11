@@ -30,6 +30,10 @@ View currentView = FREE_VIEW;
 // Player position and rotation
 float playerX = 0.0f, playerY = 1.0f, playerZ = 0.0f;
 float playerRotation = 0.0f;
+bool moveLeft = false;
+bool moveRight = false;
+bool moveForward = false;
+bool moveBackward = false;
 
 //functions signatures
 void InitializeGLUT(int argc, char** argv);
@@ -188,6 +192,15 @@ void DrawPlayer(float x, float y, float z) {
     glPopMatrix();
 }
 
+void MovePlayer(float deltaTime) {
+    const float moveSpeed = 2.0f; // Adjust the speed as needed
+
+    if (moveLeft) playerX -= moveSpeed * deltaTime;
+    if (moveRight) playerX += moveSpeed * deltaTime;
+    if (moveForward) playerZ -= moveSpeed * deltaTime;
+    if (moveBackward) playerZ += moveSpeed * deltaTime;
+}
+
 void DrawOlympicRings() {
     const float radius = 0.5f;
     const float offset = 1.2f * radius;
@@ -327,28 +340,22 @@ void SetCamera() {
 }
 
 void SpecialKeys(int key, int x, int y) {
-    const float moveSpeed = 0.1f;
-
     switch (key) {
-    case GLUT_KEY_UP:
-        if(playerZ>=-groundSize + 6 * wallThickness)
-            playerZ -= moveSpeed;
-        break;
-    case GLUT_KEY_DOWN:
-		if (playerZ <= groundSize - 6 * wallThickness)
-            playerZ += moveSpeed;
-        break;
-    case GLUT_KEY_LEFT:
-		if (playerX >= -groundSize+6*wallThickness)
-            playerX -= moveSpeed;
-        break;
-    case GLUT_KEY_RIGHT:
-        if (playerX <= groundSize-6*wallThickness)
-            playerX += moveSpeed;
-        break;
+    case GLUT_KEY_LEFT: moveLeft = true; break;
+    case GLUT_KEY_RIGHT: moveRight = true; break;
+    case GLUT_KEY_UP: moveForward = true; break;
+    case GLUT_KEY_DOWN: moveBackward = true; break;
     }
-
     glutPostRedisplay();
+}
+
+void SpecialKeysUp(int key, int x, int y) {
+    switch (key) {
+    case GLUT_KEY_LEFT: moveLeft = false; break;
+    case GLUT_KEY_RIGHT: moveRight = false; break;
+    case GLUT_KEY_UP: moveForward = false; break;
+    case GLUT_KEY_DOWN: moveBackward = false; break;
+    }
 }
 
 void Display(void) {
@@ -373,8 +380,14 @@ void Display(void) {
 }
 
 void Anim() {
-    rotAng += 0.01;
+    static int lastTime = glutGet(GLUT_ELAPSED_TIME);
+    int currentTime = glutGet(GLUT_ELAPSED_TIME);
+    float deltaTime = (currentTime - lastTime) / 1000.0f;
+    lastTime = currentTime;
 
+    MovePlayer(deltaTime);
+
+    rotAng += 0.01;
     glutPostRedisplay();
 }
 
@@ -400,6 +413,8 @@ void InitializeCallbacks() {
     glutIdleFunc(Anim);
     glutKeyboardFunc(Keyboard);
     glutSpecialFunc(SpecialKeys);
+    glutSpecialUpFunc(SpecialKeysUp);
+
 }
 
 void InitializeOpenGL() {
