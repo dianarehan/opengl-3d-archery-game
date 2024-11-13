@@ -5,6 +5,8 @@
 #include <irrKlang.h>
 #include <thread>
 using namespace irrklang;
+#include <cstdlib>
+#include <ctime>
 
 float rotAng;
 //screen size
@@ -44,6 +46,7 @@ void InitializeSound();
 
 //sound data
 ISoundEngine* engine;
+
 
 void DrawCircle(float x, float y, float radius) {
 
@@ -104,6 +107,44 @@ void DrawCollectibleArrow(float startX, float startY, float startZ, float length
     glColor3f(0.6314f, 0.0745f, 0.1412f); //red
     gluCylinder(quadratic, 0.05f, 0.0f, 0.1f, 32, 32);
     glPopMatrix();
+}
+
+void DrawQuiver(float x, float y, float z) {
+    GLUquadricObj* quad = gluNewQuadric();
+
+    // Draw the quiver body (cylinder)
+    glPushMatrix();
+    glTranslatef(x, y, z);
+    glColor3f(0.4f, 0.2f, 0.1f);  // Brownish color for the quiver
+    glRotatef(90, 1.0f, 0.0f, 0.0f);
+    gluCylinder(quad, 0.15f, 0.15f, 0.5f, 32, 32);
+    glPopMatrix();
+
+    // Draw the quiver's bottom cap
+    glPushMatrix();
+    glTranslatef(x, y, z);
+    glRotatef(90, 1.0f, 0.0f, 0.0f);
+    gluDisk(quad, 0.0f, 0.15f, 32, 1);
+    glPopMatrix();
+
+    int arrowCount = 5;
+    float arrowSpacing = 0.05f; // Vertical distance between arrows
+    for (int i = 0; i < arrowCount; i++) {
+        // Slight vertical and horizontal offset to create a natural stacked appearance
+        float offsetY = y + 0.2f + (i * arrowSpacing);  // Base offset for vertical position
+        // Optional: Add small variation for horizontal offsets within the quiver
+        float offsetX = x + (i % 2 == 0 ? 0.02f : -0.02f);  // Alternate small horizontal offset
+        float offsetZ = z + (i % 2 == 0 ? 0.02f : -0.02f);  // Alternate small horizontal offset
+
+        glPushMatrix();
+        glTranslatef(offsetX, y, offsetZ);  // Apply calculated offsets for arrow positions
+        glRotatef(-90, 1.0f, 0.0f, 0.0f);  // Point arrows upwards along the quiver's axis
+        glScaled(0.4f, 1.0f, 0.4f);    // Scale arrows to fit inside the quiver
+        DrawCollectibleArrow(0.0f, 0.0f, 0.0f, 0.4f);
+        glPopMatrix();
+    }
+
+    gluDeleteQuadric(quad);
 }
 
 void DrawBow(float x, float y, float z) {
@@ -384,6 +425,18 @@ void SetCamera() {
     }
 }
 
+void SpawnRandomArrows(int numArrows, float arrowLength) {
+    srand(static_cast<unsigned>(time(0)));
+
+    for (int i = 0; i < numArrows; ++i) {
+        float x = (static_cast<float>(rand()) / RAND_MAX) * groundSize;
+        float z = (static_cast<float>(rand()) / RAND_MAX) * groundSize;
+        float y = 0.23; //avoid z-fighting
+
+        DrawCollectibleArrow(x, y, z, arrowLength);
+    }
+}
+
 void SpecialKeys(int key, int x, int y) {
     switch (key) {
     case GLUT_KEY_LEFT: moveLeft = true; break;
@@ -419,8 +472,9 @@ void Display(void) {
     glColor3f(0.8f, 0.7f, 0.7f);
     DrawWallWithRings(rightWallX, rightWallY, rightWallZ, wallThickness, wallHeight, groundSize, -90.0f); //right
     glScalef(0.5f, 0.5f, 0.5f);
-
+    SpawnRandomArrows(2, 0.5f);
     DrawPlayer(playerX, playerY, playerZ);
+    DrawQuiver(0.5f, 0.5f, -0.5f);
     glFlush();
 }
 
