@@ -46,6 +46,7 @@ void InitializeSound();
 ISoundEngine* engine;
 
 void DrawCircle(float x, float y, float radius) {
+
     glLineWidth(ringThickness);
     glBegin(GL_LINE_LOOP);
     for (int i = 0; i < 360; i++) {
@@ -58,7 +59,7 @@ void DrawCircle(float x, float y, float radius) {
 
 void DrawArrow(float startX, float startY, float startZ, float length) {
     glLineWidth(2);
-    // Draw the arrow shaft
+    //shaft
     glBegin(GL_LINES);
     glColor3f(0.2588f, 0.2431f, 0.2510f);
     glVertex3f(startX, startY, startZ);  // Arrow start
@@ -68,30 +69,30 @@ void DrawArrow(float startX, float startY, float startZ, float length) {
     // Draw the arrowhead
     glBegin(GL_TRIANGLES);
     glColor3f(0.6784f, 0.6392f, 0.6588f);
-    glVertex3f(startX + length, startY, startZ);  // Tip of the arrowhead
-    glVertex3f(startX + length - 0.05f, startY + 0.02f, startZ); // Bottom left of the arrowhead
-    glVertex3f(startX + length - 0.05f, startY - 0.02f, startZ); // Bottom right of the arrowhead
+    glVertex3f(startX + length, startY, startZ);  // Tip
+    glVertex3f(startX + length - 0.05f, startY + 0.02f, startZ); //bottom left
+    glVertex3f(startX + length - 0.05f, startY - 0.02f, startZ); //bottom right
     glEnd();
 
-    // Draw the fletching (feathers)
+    //feathers
     glBegin(GL_TRIANGLES);
     glColor3f(0.6314f, 0.0745f, 0.1412f);
-    glVertex3f(startX, startY, startZ);  // Base of the fletching
-    glVertex3f(startX - 0.05f, startY + 0.02f, startZ); // Top left of the fletching
-    glVertex3f(startX - 0.05f, startY - 0.02f, startZ); // Top right of the fletching
+    glVertex3f(startX, startY, startZ);  //base of the fletching
+    glVertex3f(startX - 0.05f, startY + 0.02f, startZ); //top left
+    glVertex3f(startX - 0.05f, startY - 0.02f, startZ); //top right
     glEnd();
 }
 
 void DrawBow(float x, float y, float z) {
-    // Draw the main curve of the bow using a series of small line segments
+
     glPushMatrix();
     glLineWidth(2);
-    glTranslatef(x, y-0.2, z); // Position the bow relative to the player
-    glRotatef(270, 0.0f, 1.0f, 0.0f); // Rotate the bow on the y-axis
-    glRotatef(-90, 0.0f, 0.0f, 1.0f); // Rotate the bow on the x-axis
-    glColor3f(0.55f, 0.27f, 0.07f); // Brown color for the bow
+    glTranslatef(x, y-0.2, z); //relative to the player
+    glRotatef(270, 0.0f, 1.0f, 0.0f); //on y-axis
+    glRotatef(-90, 0.0f, 0.0f, 1.0f); //on x-axis
+    glColor3f(0.55f, 0.27f, 0.07f); //brown
 
-    glBegin(GL_LINE_STRIP); // Use a line strip to form a curve
+    glBegin(GL_LINE_STRIP);//curve
     float bowRadius = 0.4f;
     for (int i = -9; i <= 9; i++) { // Draw half-circle to represent bow curve
         float angle = (float)i / 18.0f * 3.14159f; // Half circle (180 degrees)
@@ -99,84 +100,83 @@ void DrawBow(float x, float y, float z) {
     }
     glEnd();
 
-    // Draw the bowstring
+    //bowstring
     glBegin(GL_LINES);
     glColor3f(0.8588f, 0.6706f, 0.6941f);
-    glVertex3f(0.0, bowRadius, 0.0f);  // Top of the bow
-    glVertex3f(0.0, -bowRadius, 0.0f); // Bottom of the bow
+    glVertex3f(0.0, bowRadius, 0.0f);  
+    glVertex3f(0.0, -bowRadius, 0.0f);
     glEnd();
 
-    // Draw the arrow
+
     DrawArrow(0.05f, 0.0f, 0.0f, 0.35f);
 
     glPopMatrix();
 }
 
 void MovePlayer(float deltaTime) {
-    const float moveSpeed = 2.0f; // Adjust the speed as needed
+    const float moveSpeed = 2.0f;
 
     if (moveLeft) {
         playerX -= moveSpeed * deltaTime;
-        playerRotation = -90.0f; // Facing left
+        playerRotation = -90.0f; //left
     }
     if (moveRight) {
         playerX += moveSpeed * deltaTime;
-        playerRotation = 90.0f; // Facing right
+        playerRotation = 90.0f; //right
     }
     if (moveForward) {
         playerZ -= moveSpeed * deltaTime;
-        playerRotation = 180.0f; // Facing forward (positive Z)
+        playerRotation = 180.0f; //(positive Z)
     }
     if (moveBackward) {
         playerZ += moveSpeed * deltaTime;
-        playerRotation = 0.0; // Facing backward
+        playerRotation = 0.0; //backward
     }
 }
 
 void DrawPlayer(float x, float y, float z) {
-    // Apply rotation based on playerRotation
+    
     glPushMatrix();
     glTranslatef(x, y, z);
-    glRotatef(playerRotation, 0.0f, 1.0f, 0.0f); // Rotate player around Y-axis
+    glRotatef(playerRotation, 0.0f, 1.0f, 0.0f); //rotate player around Y-axis
 
-    // Draw the body
+    //body
     glPushMatrix();
     glColor3f(0.5f, 0.6f, 1.0f);
     glScalef(0.5f, 0.8f, 0.2f);
     glutSolidCube(1);
     glPopMatrix();
 
-    // Position the bow near the player's left hand
     DrawBow(-0.35f, 0.0f, 0.0f);
 
-    // Draw the head
+    //head
     glPushMatrix();
-    glTranslatef(0.0f, 0.68f, 0.0f); // Adjust head position relative to the rotated player
-    glColor3f(1.0f, 0.8f, 0.6f); // Skin color for the head
+    glTranslatef(0.0f, 0.68f, 0.0f);
+    glColor3f(1.0f, 0.8f, 0.6f);
     glutSolidSphere(0.25f, 20, 20);
     glPopMatrix();
 
-    // Draw the left eye
+    //left eye
     glPushMatrix();
-    glTranslatef(-0.1f, 0.75f, 0.2f); // Position relative to head
+    glTranslatef(-0.1f, 0.75f, 0.2f);
     glColor3f(0.0f, 0.0f, 0.0f);
     glutSolidSphere(0.05f, 10, 10);
     glPopMatrix();
 
-    // Draw the right eye
+    //right eye
     glPushMatrix();
     glTranslatef(0.1f, 0.75f, 0.2f);
     glColor3f(0.0f, 0.0f, 0.0f);
     glutSolidSphere(0.05f, 10, 10);
     glPopMatrix();
 
-    // Draw the mouth
+    //mouth
     glPushMatrix();
-    glTranslatef(0.0f, 0.68f, 0.25f); // Adjust position for the mouth
-    glColor3f(0.8f, 0.0f, 0.0f); // Red color for the mouth
-    glRotatef(180.0f, 1.0f, 0.0f, 0.0f); // Rotate to face forward
+    glTranslatef(0.0f, 0.68f, 0.25f);
+    glColor3f(0.8f, 0.0f, 0.0f);
+    glRotatef(180.0f, 1.0f, 0.0f, 0.0f);
 
-    // Draw half-circle mouth (smile)
+    //half-circle mouth
     glBegin(GL_POLYGON);
     const int num_segments = 20;
     float radius = 0.08f;
@@ -187,7 +187,7 @@ void DrawPlayer(float x, float y, float z) {
     glEnd();
     glPopMatrix();
 
-    // Draw the left leg
+    //left leg
     glPushMatrix();
     glTranslatef(-0.15f, -0.7f, 0.0f);
     glColor3f(0.0f, 0.0f, 1.0f);
@@ -195,7 +195,7 @@ void DrawPlayer(float x, float y, float z) {
     glutSolidCube(1);
     glPopMatrix();
 
-    // Draw the right leg
+    //right leg
     glPushMatrix();
     glTranslatef(0.15f, -0.7f, 0.0f);
     glColor3f(0.0f, 0.0f, 1.0f);
@@ -203,7 +203,7 @@ void DrawPlayer(float x, float y, float z) {
     glutSolidCube(1);
     glPopMatrix();
 
-    // Draw the left hand
+    //left hand
     glPushMatrix();
     glTranslatef(-0.30f, 0.1f, 0.0f);
     glColor3f(1.0f, 0.8f, 0.6f);
@@ -211,7 +211,7 @@ void DrawPlayer(float x, float y, float z) {
     glutSolidCube(1);
     glPopMatrix();
 
-    // Draw the right hand
+    //right hand
     glPushMatrix();
     glTranslatef(0.30f, 0.1f, 0.0f);
     glColor3f(1.0f, 0.8f, 0.6f);
@@ -219,9 +219,8 @@ void DrawPlayer(float x, float y, float z) {
     glutSolidCube(1);
     glPopMatrix();
 
-    glPopMatrix(); // End rotation and translation for the entire player
+    glPopMatrix();
 }
-
 
 void DrawOlympicRings() {
     const float radius = 0.5f;
