@@ -59,57 +59,59 @@ void DrawCircle(float x, float y, float radius) {
 
 void DrawArrow(float startX, float startY, float startZ, float length) {
     glLineWidth(2);
-    //shaft
-    glBegin(GL_LINES);
-    glColor3f(0.2588f, 0.2431f, 0.2510f);
-    glVertex3f(startX, startY, startZ);  // Arrow start
-    glVertex3f(startX + length, startY, startZ);  // Arrow end
-    glEnd();
 
-    // Draw the arrowhead
-    glBegin(GL_TRIANGLES);
-    glColor3f(0.6784f, 0.6392f, 0.6588f);
-    glVertex3f(startX + length, startY, startZ);  // Tip
-    glVertex3f(startX + length - 0.05f, startY + 0.02f, startZ); //bottom left
-    glVertex3f(startX + length - 0.05f, startY - 0.02f, startZ); //bottom right
-    glEnd();
+    GLUquadricObj* quadratic = gluNewQuadric();
+    glPushMatrix();
+    glTranslatef(startX, startY, startZ);
+    glRotatef(90, 0.0f, 1.0f, 0.0f);
+	glColor3f(0.2588f, 0.2431f, 0.2510f);//dark grey
+    gluCylinder(quadratic, 0.02f, 0.02f, length, 32, 32);
+    glPopMatrix();
 
-    //feathers
-    glBegin(GL_TRIANGLES);
-    glColor3f(0.6314f, 0.0745f, 0.1412f);
-    glVertex3f(startX, startY, startZ);  //base of the fletching
-    glVertex3f(startX - 0.05f, startY + 0.02f, startZ); //top left
-    glVertex3f(startX - 0.05f, startY - 0.02f, startZ); //top right
-    glEnd();
+    glPushMatrix();
+    glTranslatef(startX + length, startY, startZ);
+    glRotatef(90, 0.0f, 1.0f, 0.0f);
+	glColor3f(0.6784f, 0.6392f, 0.6588f);//light grey
+    gluCylinder(quadratic, 0.05f, 0.0f, 0.1f, 32, 32);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(startX-0.07, startY, startZ);
+    glRotatef(90, 0.0f, 1.0f, 0.0f);
+	glColor3f(0.6314f, 0.0745f, 0.1412f);//red
+    gluCylinder(quadratic, 0.05f, 0.0f, 0.1f, 32, 32); 
+    glPopMatrix();
 }
 
 void DrawBow(float x, float y, float z) {
-
     glPushMatrix();
     glLineWidth(2);
-    glTranslatef(x, y-0.2, z); //relative to the player
-    glRotatef(270, 0.0f, 1.0f, 0.0f); //on y-axis
-    glRotatef(-90, 0.0f, 0.0f, 1.0f); //on x-axis
-    glColor3f(0.55f, 0.27f, 0.07f); //brown
+    glTranslatef(x, y - 0.2f, z);
+    glRotatef(270, 0.0f, 1.0f, 0.0f);
+    glRotatef(-90, 0.0f, 0.0f, 1.0f);
+    glColor3f(0.55f, 0.27f, 0.07f);
 
-    glBegin(GL_LINE_STRIP);//curve
-    float bowRadius = 0.4f;
-    for (int i = -9; i <= 9; i++) { // Draw half-circle to represent bow curve
-        float angle = (float)i / 18.0f * 3.14159f; // Half circle (180 degrees)
-        glVertex3f(bowRadius * cos(angle), bowRadius * sin(angle), 0.0f);
+    glBegin(GL_QUAD_STRIP);
+    float bowRadius = 0.45f;
+    for (int i = -9; i <= 9; i++) {
+        float angle = (float)i / 18.0f * 3.14159f;
+        float xPos = bowRadius * cos(angle);
+        float yPos = bowRadius * sin(angle);
+        glVertex3f(xPos, yPos, 0.05f);
+        glVertex3f(xPos, yPos, -0.05f);
     }
     glEnd();
 
-    //bowstring
-    glBegin(GL_LINES);
+    glBegin(GL_QUADS);
     glColor3f(0.8588f, 0.6706f, 0.6941f);
-    glVertex3f(0.0, bowRadius, 0.0f);  
-    glVertex3f(0.0, -bowRadius, 0.0f);
+    glVertex3f(0.0, bowRadius, 0.05f);
+    glVertex3f(0.0, -bowRadius, 0.05f);
+    glVertex3f(0.0, -bowRadius, -0.05f);
+    glVertex3f(0.0, bowRadius, -0.05f);
     glEnd();
 
-
-    DrawArrow(0.05f, 0.0f, 0.0f, 0.35f);
-
+    // Draw the arrow
+    DrawArrow(0.05f, 0.0f, 0.0f, 0.32f);
     glPopMatrix();
 }
 
