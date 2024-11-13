@@ -47,6 +47,30 @@ void InitializeSound();
 //sound data
 ISoundEngine* engine;
 
+void DrawWindFlag(float x, float y, float z) {
+    GLUquadricObj* quad = gluNewQuadric();
+
+    // Draw the flagpole
+    glPushMatrix();
+    glTranslatef(x, y, z);
+    glColor3f(0.5f, 0.5f, 0.5f);  // Gray color for the flagpole
+    glRotatef(90, 1.0f, 0.0f, 0.0f);
+    gluCylinder(quad, 0.02f, 0.02f, 2.0f, 32, 32);
+    glPopMatrix();
+
+    // Draw the flag
+    glPushMatrix();
+    glTranslatef(x, y, z);
+    glColor3f(1.0f, 0.5f, 0.0f);  // Orange color for the flag
+    glBegin(GL_TRIANGLES);
+    glVertex3f(0.0f, 0.0f, 0.0f);
+    glVertex3f(0.5f, 0.2f, 0.0f);
+    glVertex3f(0.0f, 0.4f, 0.0f);
+    glEnd();
+    glPopMatrix();
+
+    gluDeleteQuadric(quad);
+}
 
 void DrawCircle(float x, float y, float radius) {
 
@@ -474,6 +498,7 @@ void Display(void) {
     glScalef(0.5f, 0.5f, 0.5f);
     SpawnRandomArrows(2, 0.5f);
     DrawPlayer(playerX, playerY, playerZ);
+    DrawWindFlag(1.0f, 2.0f, 1.0f);  // Adjust the position as needed
     DrawQuiver(0.5f, 0.5f, -0.5f);
     glFlush();
 }
