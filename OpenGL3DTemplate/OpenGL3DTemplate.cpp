@@ -140,19 +140,19 @@ void DrawBow(float x, float y, float z) {
 void MovePlayer(float deltaTime) {
     const float moveSpeed = 2.0f;
 
-    if (moveLeft) {
+    if (moveLeft&&playerX>=-groundSize+6*wallThickness) {
         playerX -= moveSpeed * deltaTime;
         playerRotation = -90.0f; //left
     }
-    if (moveRight) {
+    if (moveRight&&playerX<=groundSize-6*wallThickness) {
         playerX += moveSpeed * deltaTime;
         playerRotation = 90.0f; //right
     }
-    if (moveForward) {
+    if (moveForward&&playerZ>=-groundSize+6*wallThickness) {
         playerZ -= moveSpeed * deltaTime;
         playerRotation = 180.0f; //(positive Z)
     }
-    if (moveBackward) {
+    if (moveBackward&&playerZ<=groundSize-6*wallThickness) {
         playerZ += moveSpeed * deltaTime;
         playerRotation = 0.0; //backward
     }
