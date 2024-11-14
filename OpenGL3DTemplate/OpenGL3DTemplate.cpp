@@ -387,22 +387,24 @@ void DrawArrow(float startX, float startY, float startZ, float length) {
 
 void DrawCollectibleArrow(float startX, float startY, float startZ, float length) {
     glLineWidth(2);
-
     GLUquadricObj* quadratic = gluNewQuadric();
     glPushMatrix();
     glTranslatef(startX, startY, startZ);
+    glRotatef(180, 0.0f, 1.0f, 0.0f);
     glColor3f(0.2588f, 0.2431f, 0.2510f); //dark grey
     gluCylinder(quadratic, 0.02f, 0.02f, length, 32, 32);
     glPopMatrix();
 
     glPushMatrix();
-    glTranslatef(startX, startY, startZ+ length);
+    glTranslatef(startX, startY, startZ- length);
+	glRotatef(180, 0.0f, 1.0f, 0.0f);
     glColor3f(0.6784f, 0.6392f, 0.6588f); //light grey
     gluCylinder(quadratic, 0.05f, 0.0f, 0.1f, 32, 32);
     glPopMatrix();
 
     glPushMatrix();
     glTranslatef(startX , startY, startZ);
+	glRotatef(180, 0.0f, 1.0f, 0.0f);
     glColor3f(0.6314f, 0.0745f, 0.1412f); //red
     gluCylinder(quadratic, 0.05f, 0.0f, 0.1f, 32, 32);
     glPopMatrix();
