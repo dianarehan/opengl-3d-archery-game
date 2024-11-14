@@ -232,6 +232,11 @@ void DrawScoreboard(float x, float y, float z, float thickness, float width, flo
     glutSolidCube(1.0f);
     glPopMatrix();
 
+    glColor3f(1.0f, 0.0f, 0.0f); // Red color for the torus
+    glPushMatrix();
+    glTranslatef(x, y + height / 2.0f + 0.2f, z - thickness / 2.0f);
+    glutSolidTorus(0.05, 0.2, 20, 20);
+    glPopMatrix();
     // Draw the score label
     glColor3f(1.0f, 1.0f, 1.0f); // White color for text
     std::stringstream scoreText;
