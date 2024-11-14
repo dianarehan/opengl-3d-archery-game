@@ -54,6 +54,7 @@ bool isTimeUp = false;
 //windsock data
 float windDirection = 45.0f;
 float windSpeed = 0.5f;
+bool isMoving = false;
 
 void DrawPole(float x, float y, float z) {
     float poleHeight = 2.0f;
@@ -81,9 +82,9 @@ void DrawWindsock(float x, float y, float z) {
 
     for (int i = 0; i < numStripes; ++i) {
         if (i % 2 == 0)
-            glColor3f(1.0f, 0.65f, 0.0f); //orange
+            glColor3f(1.0f, 0.65f, 0.0f);//orange
         else
-            glColor3f(1.0f, 1.0f, 1.0f);   //white
+            glColor3f(1.0f, 1.0f, 1.0f);
 
         GLUquadric* quad = gluNewQuadric();
         glPushMatrix();
@@ -96,35 +97,13 @@ void DrawWindsock(float x, float y, float z) {
     glPopMatrix();
 }
 
-/*void DrawWindFlag(float x, float y, float z) {
-    GLUquadricObj* quad = gluNewQuadric();
-
-    // Draw the flagpole
-    glPushMatrix();
-    glTranslatef(x, y, z);
-    glColor3f(0.5f, 0.5f, 0.5f);  // Gray color for the flagpole
-    glRotatef(90, 1.0f, 0.0f, 0.0f);
-    gluCylinder(quad, 0.02f, 0.02f, 2.0f, 32, 32);
-    glPopMatrix();
-
-    // Draw the flag
-    glPushMatrix();
-    glTranslatef(x, y, z);
-    glRotatef(90, 0.0f, 1.0f, 0.0f);
-
-    // Draw the orange part of the cone
-    glColor3f(1.0f, 0.5f, 0.0f);  // Orange color
-    gluCylinder(quad, 0.0f, 0.5f, 1.0f, 32, 32);
-
-    // Draw the white part of the cone
-    glTranslatef(0.0f, 0.0f, 0.5f);
-    glColor3f(1.0f, 1.0f, 1.0f);  // White color
-    gluCylinder(quad, 0.0f, 0.5f, 1.0f, 32, 32);
-
-    glPopMatrix();
-
-    gluDeleteQuadric(quad);
-}*/
+void updateWind(int value) {
+	if (!isMoving) return;
+    windDirection += windSpeed * 10.0f;
+    if (windDirection >= 360.0f) windDirection -= 360.0f;
+    glutPostRedisplay();
+    glutTimerFunc(50, updateWind, 0);
+}
 
 void DrawCircle(float x, float y, float radius) {
 
@@ -472,6 +451,12 @@ void Keyboard(unsigned char key, int x, int y) {
 	case 'u': //front view
 		currentView = FRONT_VIEW;
 		break;
+    case '1':
+		isMoving = !isMoving;
+        if (isMoving) {
+            updateWind(0);
+        }
+        break;
     }
 	printf("camX: %f, camY: %f, camZ: %f, camYaw: %f, camPitch: %f\n", camX, camY, camZ, camYaw, camPitch);
     glutPostRedisplay();
@@ -593,7 +578,6 @@ void InitializeCallbacks() {
     glutKeyboardFunc(Keyboard);
     glutSpecialFunc(SpecialKeys);
     glutSpecialUpFunc(SpecialKeysUp);
-
 }
 
 void InitializeOpenGL() {
