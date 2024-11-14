@@ -63,6 +63,10 @@ bool isMoving = false;
 //target data
 float targetPosX = 0.0f, targetPosY=1.5, targetPosZ=-3;
 float targetSpeed = 0.01f;
+bool isArrowActive = false;
+float arrowPosX, arrowPosY, arrowPosZ;
+float arrowSpeed = 0.1f;
+
 
 void DrawNumber1(float x, float y) {
     glBegin(GL_QUADS);
@@ -385,27 +389,28 @@ void DrawArrow(float startX, float startY, float startZ, float length) {
     glPopMatrix();
 }
 
-void DrawCollectibleArrow(float startX, float startY, float startZ, float length) {
+void DrawTargetArrow() {
+    if (!isArrowActive) return;
     glLineWidth(2);
     GLUquadricObj* quadratic = gluNewQuadric();
     glPushMatrix();
-    glTranslatef(startX, startY, startZ);
+    glTranslatef(arrowPosX, arrowPosY, arrowPosZ);
     glRotatef(180, 0.0f, 1.0f, 0.0f);
-    glColor3f(0.2588f, 0.2431f, 0.2510f); //dark grey
-    gluCylinder(quadratic, 0.02f, 0.02f, length, 32, 32);
+    glColor3f(0.2588f, 0.2431f, 0.2510f); // dark grey
+    gluCylinder(quadratic, 0.02f, 0.02f, 0.5f, 32, 32);
     glPopMatrix();
 
     glPushMatrix();
-    glTranslatef(startX, startY, startZ- length);
-	glRotatef(180, 0.0f, 1.0f, 0.0f);
-    glColor3f(0.6784f, 0.6392f, 0.6588f); //light grey
+    glTranslatef(arrowPosX, arrowPosY, arrowPosZ - 0.5f);
+    glRotatef(180, 0.0f, 1.0f, 0.0f);
+    glColor3f(0.6784f, 0.6392f, 0.6588f); // light grey
     gluCylinder(quadratic, 0.05f, 0.0f, 0.1f, 32, 32);
     glPopMatrix();
 
     glPushMatrix();
-    glTranslatef(startX , startY, startZ);
-	glRotatef(180, 0.0f, 1.0f, 0.0f);
-    glColor3f(0.6314f, 0.0745f, 0.1412f); //red
+    glTranslatef(arrowPosX, arrowPosY, arrowPosZ);
+    glRotatef(180, 0.0f, 1.0f, 0.0f);
+    glColor3f(0.6314f, 0.0745f, 0.1412f); // red
     gluCylinder(quadratic, 0.05f, 0.0f, 0.1f, 32, 32);
     glPopMatrix();
 }
@@ -441,7 +446,7 @@ void DrawQuiver(float x, float y, float z) {
         glTranslatef(offsetX, y, offsetZ);  // Apply calculated offsets for arrow positions
         glRotatef(-90, 1.0f, 0.0f, 0.0f);  // Point arrows upwards along the quiver's axis
         glScaled(0.4f, 1.0f, 0.4f);    // Scale arrows to fit inside the quiver
-        DrawCollectibleArrow(0.0f, 0.0f, 0.0f, 0.4f);
+        DrawTargetArrow();
         glPopMatrix();
     }
 
@@ -644,6 +649,26 @@ void DrawWallWithRings(float x, float y, float z, float width, float height, flo
     glPopMatrix();
 }
 
+void Update(int value) {
+    if (isArrowActive) {
+        arrowPosZ -= arrowSpeed;
+
+        if (arrowPosZ <= targetPosZ + 0.1f && arrowPosZ >= targetPosZ - 0.1f &&
+            arrowPosX <= targetPosX + 0.1f && arrowPosX >= targetPosX - 0.1f &&
+            arrowPosY <= targetPosY + 0.1f && arrowPosY >= targetPosY - 0.1f) {
+            isArrowActive = false;
+            score += 10;
+        }
+
+        if (arrowPosZ < -groundSize) {
+            isArrowActive = false;
+        }
+    }
+
+    glutPostRedisplay();
+    glutTimerFunc(16, Update, 0);
+}
+
 void Keyboard(unsigned char key, int x, int y) {
     const float moveSpeed = 0.1f;
     const float turnSpeed = 0.05f;
@@ -701,7 +726,16 @@ void Keyboard(unsigned char key, int x, int y) {
             UpdateWind(0);
         }
         break;
+    case ' ':
+        if (!isArrowActive) {
+            isArrowActive = true;
+            arrowPosX = playerX;
+            arrowPosY = playerY+0.5;
+            arrowPosZ = playerZ;
+        }
+        break;
     }
+	printf("my score is %d\n", score);
 	printf("camX: %f, camY: %f, camZ: %f, camYaw: %f, camPitch: %f\n", camX, camY, camZ, camYaw, camPitch);
     glutPostRedisplay();
 }
@@ -740,7 +774,7 @@ void SpawnRandomArrows(int numArrows, float arrowLength) {
         float z = (static_cast<float>(rand()) / RAND_MAX) * groundSize;
         float y = 0.23; //avoid z-fighting
 
-        DrawCollectibleArrow(x, y, z, arrowLength);
+        DrawTargetArrow();
     }
 }
 
@@ -780,13 +814,14 @@ void Display(void) {
 	if (currentView != SIDE_VIEW)
 		DrawWallWithRings(rightWallX, rightWallY, rightWallZ, wallThickness, wallHeight, groundSize, -90.0f); //right
     glScalef(0.5f, 0.5f, 0.5f);
-    SpawnRandomArrows(2, 0.5f);
+    //SpawnRandomArrows(2, 0.5f);
     DrawPlayer(playerX, playerY, playerZ);
     DrawQuiver(0.5f, 0.5f, -0.5f);
     DrawWindsock(3,2,0.5);
 	DrawTarget(targetPosX,targetPosY,targetPosZ);
     DrawScoreboard(leftWallX-0.5, 1.5f, backWallZ-1, 0.2f, 1.6f, 1.0f);
     DrawPodium(-2.6f, 0.5f, 2.0f, 45.0f);
+    DrawTargetArrow();
     glFlush();
 }
 
@@ -808,6 +843,8 @@ void main(int argc, char** argv) {
     InitializeCallbacks();
     InitializeOpenGL();
     UpdateTarget(0);
+    Update(0);
+
     glutMainLoop();
     engine->drop();
 }
