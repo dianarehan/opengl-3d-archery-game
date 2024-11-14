@@ -64,6 +64,133 @@ bool isMoving = false;
 float targetPosX = 0.0f, targetPosY=1.5, targetPosZ=-3;
 float targetSpeed = 0.01f;
 
+void drawNumber1(float x, float y) {
+    glBegin(GL_QUADS);
+    glVertex2f(x, y);
+    glVertex2f(x + 0.1f, y);
+    glVertex2f(x + 0.1f, y + 0.5f);
+    glVertex2f(x, y + 0.5f);
+    glEnd();
+}
+
+void drawNumber2(float x, float y) {
+    //top
+    glBegin(GL_QUADS);
+    glVertex2f(x, y + 0.4f);
+    glVertex2f(x + 0.3f, y + 0.4f);
+    glVertex2f(x + 0.3f, y + 0.5f);
+    glVertex2f(x, y + 0.5f);
+    glEnd();
+
+    //middle
+    glBegin(GL_QUADS);
+    glVertex2f(x, y + 0.2f);
+    glVertex2f(x + 0.3f, y + 0.2f);
+    glVertex2f(x + 0.3f, y + 0.3f);
+    glVertex2f(x, y + 0.3f);
+    glEnd();
+
+    //bottom
+    glBegin(GL_QUADS);
+    glVertex2f(x, y);
+    glVertex2f(x + 0.3f, y);
+    glVertex2f(x + 0.3f, y + 0.1f);
+    glVertex2f(x, y + 0.1f);
+    glEnd();
+
+    //right top
+    glBegin(GL_QUADS);
+    glVertex2f(x + 0.2f, y + 0.3f);
+    glVertex2f(x + 0.3f, y + 0.3f);
+    glVertex2f(x + 0.3f, y + 0.4f);
+    glVertex2f(x + 0.2f, y + 0.4f);
+    glEnd();
+
+    //right bot
+    glBegin(GL_QUADS);
+    glVertex2f(x, y + 0.1f);
+    glVertex2f(x + 0.1f, y + 0.1f);
+    glVertex2f(x + 0.1f, y +0.2f);
+    glVertex2f(x, y + 0.2f); 
+    glEnd();
+}
+
+void drawNumber3(float x, float y) {
+    //top
+    glBegin(GL_QUADS);
+    glVertex2f(x, y + 0.4f);
+    glVertex2f(x + 0.3f, y + 0.4f);
+    glVertex2f(x + 0.3f, y + 0.5f);
+    glVertex2f(x, y + 0.5f);
+    glEnd();
+
+    //middle
+    glBegin(GL_QUADS);
+    glVertex2f(x, y + 0.2f);
+    glVertex2f(x + 0.3f, y + 0.2f);
+    glVertex2f(x + 0.3f, y + 0.3f);
+    glVertex2f(x, y + 0.3f);
+    glEnd();
+
+    //bottom
+    glBegin(GL_QUADS);
+    glVertex2f(x, y);
+    glVertex2f(x + 0.3f, y);
+    glVertex2f(x + 0.3f, y + 0.1f);
+    glVertex2f(x, y + 0.1f);
+    glEnd();
+
+    //right top
+    glBegin(GL_QUADS);
+    glVertex2f(x + 0.2f, y + 0.3f);
+    glVertex2f(x + 0.3f, y + 0.3f);
+    glVertex2f(x + 0.3f, y + 0.4f);
+    glVertex2f(x + 0.2f, y + 0.4f);
+    glEnd();
+
+    //right bottom
+    glBegin(GL_QUADS);
+    glVertex2f(x + 0.2f, y + 0.1f);
+    glVertex2f(x + 0.3f, y + 0.1f);
+    glVertex2f(x + 0.3f, y + 0.2f);
+    glVertex2f(x + 0.2f, y + 0.2f);
+    glEnd();
+}
+
+void drawPodium(float posX, float posY, float posZ, float rotationAngle) {
+
+    glPushMatrix();
+    glTranslatef(posX, posY, posZ);
+    glRotatef(rotationAngle, 0.0f, 1.0f, 0.0f);
+
+    glColor3f(0.6f, 0.6f, 0.6f);//gray
+
+    glPushMatrix();
+    glTranslatef(0.0f, 0.0f, 0.0f);
+    glScalef(1.0f, 0.5f, 1.0f);
+    glutSolidCube(1.0);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(-1.1f, -0.25f, 0.0f);
+    glScalef(1.0f, 0.25f, 1.0f);
+    glutSolidCube(1.0);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(1.1f, -0.35f, 0.0f);
+    glScalef(1.0f, 0.15f, 1.0f);
+    glutSolidCube(1.0);
+    glPopMatrix();
+
+    glColor3f(1.0f, 1.0f, 0.0f);//yellow
+    drawNumber1(-0.05f, 0.1f);
+    drawNumber2(-1.2f, -0.1f);
+    drawNumber3(0.9f, -0.2f);
+
+    glPopMatrix();
+}
+
 void RenderText(float x, float y, const char* text) {
     glRasterPos2f(x, y);
     while (*text) {
@@ -637,7 +764,7 @@ void Display(void) {
     DrawWindsock(3,2,0.5);
 	DrawTarget(targetPosX,targetPosY,targetPosZ);
     DrawScoreboard(leftWallX-0.5, 1.5f, backWallZ-1, 0.2f, 1.6f, 1.0f);
-
+    drawPodium(-2.3f, 0.5f, 2.0f, 45.0f);
     glFlush();
 }
 
