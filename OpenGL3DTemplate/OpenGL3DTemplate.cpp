@@ -56,6 +56,10 @@ float windDirection = 45.0f;
 float windSpeed = 0.5f;
 bool isMoving = false;
 
+//target data
+float targetPosX = 0.0f, targetPosY=1.5, targetPosZ=-3;
+float targetSpeed = 0.05f;
+
 void DrawPole(float x, float y, float z) {
     float poleHeight = 2.0f;
     float poleRadius = 0.05f;
@@ -97,12 +101,35 @@ void DrawWindsock(float x, float y, float z) {
     glPopMatrix();
 }
 
-void updateWind(int value) {
+void UpdateWind(int value) {
 	if (!isMoving) return;
     windDirection += windSpeed * 10.0f;
     if (windDirection >= 360.0f) windDirection -= 360.0f;
     glutPostRedisplay();
-    glutTimerFunc(50, updateWind, 0);
+    glutTimerFunc(50, UpdateWind, 0);
+}
+
+void DrawDisk(float radius, float innerRadius, float red, float green, float blue) {
+    GLUquadric* quadric = gluNewQuadric();
+
+    glColor3f(red, green, blue);
+    gluDisk(quadric, innerRadius, radius, 100, 1);
+
+    gluDeleteQuadric(quadric);
+}
+
+void DrawTarget(float x, float y, float z) {
+
+    glPushMatrix();
+    glTranslatef(x, y, z);
+
+    DrawDisk(0.2f, 0.0f, 1.0f, 1.0f, 0.0f); //yellow
+    DrawDisk(0.3f, 0.2f, 1.0f, 0.0f, 0.0f); //red
+    DrawDisk(0.4f, 0.3f, 0.0f, 0.0f, 1.0f); //blue
+    DrawDisk(0.5f, 0.4f, 0.0f, 0.0f, 0.0f); //black
+    DrawDisk(0.6f, 0.5f, 1.0f, 1.0f, 1.0f); //white
+
+    glPopMatrix();
 }
 
 void DrawCircle(float x, float y, float radius) {
@@ -454,7 +481,7 @@ void Keyboard(unsigned char key, int x, int y) {
     case '1':
 		isMoving = !isMoving;
         if (isMoving) {
-            updateWind(0);
+            UpdateWind(0);
         }
         break;
     }
@@ -539,7 +566,7 @@ void Display(void) {
     DrawPlayer(playerX, playerY, playerZ);
     DrawQuiver(0.5f, 0.5f, -0.5f);
     DrawWindsock(3,2,0.5);
-
+	DrawTarget(targetPosX,targetPosY,targetPosZ);
     glFlush();
 }
 
