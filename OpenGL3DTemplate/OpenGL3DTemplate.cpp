@@ -29,7 +29,7 @@ float camYaw = 0.0f, camPitch = -0.2f;
 enum View { FREE_VIEW, TOP_VIEW, SIDE_VIEW, FRONT_VIEW };
 View currentView = FREE_VIEW;
 
-// Player position and rotation
+//player position and rotation
 float playerX = 0.0f, playerY = 1.0f, playerZ = 0.0f;
 float playerRotation = 0.0f;
 bool moveLeft = false;
@@ -47,7 +47,56 @@ void InitializeSound();
 //sound data
 ISoundEngine* engine;
 
-void DrawWindFlag(float x, float y, float z) {
+//game data
+bool isGameOver = false;
+bool isTimeUp = false;
+
+//windsock data
+float windDirection = 45.0f;
+float windSpeed = 0.5f;
+
+void DrawPole(float x, float y, float z) {
+    float poleHeight = 2.0f;
+    float poleRadius = 0.05f;
+
+    GLUquadric* quad = gluNewQuadric();
+    glPushMatrix();
+    glColor3f(0.5f, 0.5f, 0.5f);
+    glTranslatef(x,y, z);
+    glRotated(90, 1.0f, 0.0f, 0.0f);
+    gluCylinder(quad, poleRadius, poleRadius, poleHeight, 16, 16);
+    glPopMatrix();
+    gluDeleteQuadric(quad);
+}
+
+void DrawWindsock(float x, float y, float z) {
+    int numStripes = 5;
+    float sockLength = 2.5f;
+    float sockRadius = 0.2f;
+    DrawPole(x, y, z);
+
+    glPushMatrix();
+    glTranslatef(x, y, z);
+    glRotatef(windDirection, 0.0f, 1.0f, 0.0f);
+
+    for (int i = 0; i < numStripes; ++i) {
+        if (i % 2 == 0)
+            glColor3f(1.0f, 0.65f, 0.0f); //orange
+        else
+            glColor3f(1.0f, 1.0f, 1.0f);   //white
+
+        GLUquadric* quad = gluNewQuadric();
+        glPushMatrix();
+        glTranslatef(0.0f, 0.0f, -i * (sockLength / numStripes));
+        gluCylinder(quad, sockRadius * (1 - 0.1f * i), sockRadius * (1 - 0.1f * i),
+            sockLength / numStripes, 16, 16);
+        glPopMatrix();
+        gluDeleteQuadric(quad);
+    }
+    glPopMatrix();
+}
+
+/*void DrawWindFlag(float x, float y, float z) {
     GLUquadricObj* quad = gluNewQuadric();
 
     // Draw the flagpole
@@ -61,16 +110,21 @@ void DrawWindFlag(float x, float y, float z) {
     // Draw the flag
     glPushMatrix();
     glTranslatef(x, y, z);
-    glColor3f(1.0f, 0.5f, 0.0f);  // Orange color for the flag
-    glBegin(GL_TRIANGLES);
-    glVertex3f(0.0f, 0.0f, 0.0f);
-    glVertex3f(0.5f, 0.2f, 0.0f);
-    glVertex3f(0.0f, 0.4f, 0.0f);
-    glEnd();
+    glRotatef(90, 0.0f, 1.0f, 0.0f);
+
+    // Draw the orange part of the cone
+    glColor3f(1.0f, 0.5f, 0.0f);  // Orange color
+    gluCylinder(quad, 0.0f, 0.5f, 1.0f, 32, 32);
+
+    // Draw the white part of the cone
+    glTranslatef(0.0f, 0.0f, 0.5f);
+    glColor3f(1.0f, 1.0f, 1.0f);  // White color
+    gluCylinder(quad, 0.0f, 0.5f, 1.0f, 32, 32);
+
     glPopMatrix();
 
     gluDeleteQuadric(quad);
-}
+}*/
 
 void DrawCircle(float x, float y, float radius) {
 
@@ -498,8 +552,9 @@ void Display(void) {
     glScalef(0.5f, 0.5f, 0.5f);
     SpawnRandomArrows(2, 0.5f);
     DrawPlayer(playerX, playerY, playerZ);
-    DrawWindFlag(1.0f, 2.0f, 1.0f);  // Adjust the position as needed
     DrawQuiver(0.5f, 0.5f, -0.5f);
+    DrawWindsock(3,2,0.5);
+
     glFlush();
 }
 
