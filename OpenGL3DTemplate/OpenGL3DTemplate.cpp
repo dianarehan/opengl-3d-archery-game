@@ -64,7 +64,7 @@ bool isMoving = false;
 float targetPosX = 0.0f, targetPosY=1.5, targetPosZ=-3;
 float targetSpeed = 0.01f;
 
-void drawNumber1(float x, float y) {
+void DrawNumber1(float x, float y) {
     glBegin(GL_QUADS);
     glVertex2f(x, y);
     glVertex2f(x + 0.1f, y);
@@ -73,7 +73,7 @@ void drawNumber1(float x, float y) {
     glEnd();
 }
 
-void drawNumber2(float x, float y) {
+void DrawNumber2(float x, float y) {
     //top
     glBegin(GL_QUADS);
     glVertex2f(x, y + 0.4f);
@@ -115,7 +115,7 @@ void drawNumber2(float x, float y) {
     glEnd();
 }
 
-void drawNumber3(float x, float y) {
+void DrawNumber3(float x, float y) {
     //top
     glBegin(GL_QUADS);
     glVertex2f(x, y + 0.4f);
@@ -157,7 +157,7 @@ void drawNumber3(float x, float y) {
     glEnd();
 }
 
-void drawPodium(float posX, float posY, float posZ, float rotationAngle) {
+void DrawPodium(float posX, float posY, float posZ, float rotationAngle) {
 
     glPushMatrix();
     glTranslatef(posX, posY, posZ);
@@ -184,9 +184,9 @@ void drawPodium(float posX, float posY, float posZ, float rotationAngle) {
     glPopMatrix();
 
     glColor3f(1.0f, 1.0f, 0.0f);//yellow
-    drawNumber1(-0.05f, 0.1f);
-    drawNumber2(-1.2f, -0.1f);
-    drawNumber3(0.9f, -0.2f);
+    DrawNumber1(-0.05f, 0.1f);
+    DrawNumber2(-1.2f, -0.1f);
+    DrawNumber3(0.9f, -0.2f);
 
     glPopMatrix();
 }
@@ -764,7 +764,7 @@ void Display(void) {
     DrawWindsock(3,2,0.5);
 	DrawTarget(targetPosX,targetPosY,targetPosZ);
     DrawScoreboard(leftWallX-0.5, 1.5f, backWallZ-1, 0.2f, 1.6f, 1.0f);
-    drawPodium(-2.3f, 0.5f, 2.0f, 45.0f);
+    DrawPodium(-2.6f, 0.5f, 2.0f, 45.0f);
     glFlush();
 }
 
