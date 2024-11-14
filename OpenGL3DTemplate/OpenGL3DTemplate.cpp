@@ -7,6 +7,8 @@
 using namespace irrklang;
 #include <cstdlib>
 #include <ctime>
+#include <string>
+#include <sstream>
 
 float rotAng;
 //screen size
@@ -50,6 +52,8 @@ ISoundEngine* engine;
 //game data
 bool isGameOver = false;
 bool isTimeUp = false;
+int score = 0;
+float timeRemaining = 60.0f;
 
 //windsock data
 float windDirection = 45.0f;
@@ -59,6 +63,59 @@ bool isMoving = false;
 //target data
 float targetPosX = 0.0f, targetPosY=1.5, targetPosZ=-3;
 float targetSpeed = 0.01f;
+
+void RenderText(float x, float y, const char* text) {
+    glRasterPos2f(x, y);
+    while (*text) {
+        glutBitmapCharacter(GLUT_BITMAP_9_BY_15, *text++);
+    }
+}
+
+void DrawScoreboard(float x, float y, float z, float thickness, float width, float height) {
+
+    glColor3f(0.0f, 0.0f, 0.0f);
+
+    //outer frame
+    glPushMatrix();
+    glTranslatef(x, y, z-thickness/2.0f);
+	glScaled(width, height, thickness);
+    glutSolidCube(width);
+    glPopMatrix();
+
+    //inner screen
+    glColor3f(53.0f / 255.0f, 56.0f / 255.0f, 54.0f / 255.0f);//dark grey
+    glPushMatrix();
+    glTranslatef(x, y, z - thickness / 2.0f+0.1f);
+    glScaled(width, height, thickness);
+    glutSolidCube(width - 0.2f);
+    glPopMatrix();
+
+    glColor3f(0.0f, 0.0f, 0.0f);
+    //left stand
+    glPushMatrix();
+    glTranslatef(x-width/2.0f+0.2f, y-height, z-thickness / 2);
+    glScalef(0.2f, height, 0.2f);
+    glutSolidCube(1.0f);
+    glPopMatrix();
+
+    //right stand
+    glPushMatrix();
+    glTranslatef(x + width/2.0f -0.2f, y-height,z-thickness/2);
+    glScalef(0.2f, height, 0.2f);
+    glutSolidCube(1.0f);
+    glPopMatrix();
+
+    // Draw the score label
+    glColor3f(1.0f, 1.0f, 1.0f); // White color for text
+    std::stringstream scoreText;
+    scoreText << "Score: " << score;
+    RenderText(x + 0.7f, y + 0.3f, scoreText.str().c_str());
+
+    // Draw the timer label
+    std::stringstream timerText;
+    timerText << "Time: " << static_cast<int>(timeRemaining);
+    RenderText(x - 0.7f, y + 0.1f, timerText.str().c_str());
+}
 
 void DrawPole(float x, float y, float z) {
     float poleHeight = 2.0f;
@@ -571,13 +628,16 @@ void Display(void) {
     glColor3f(0.9f, 0.9f, 0.8f);
     DrawWallWithRings(leftWallX, leftWallY, leftWallZ, wallThickness, wallHeight, groundSize, 90.0f); //left
     glColor3f(0.8f, 0.7f, 0.7f);
-    DrawWallWithRings(rightWallX, rightWallY, rightWallZ, wallThickness, wallHeight, groundSize, -90.0f); //right
+	if (currentView != SIDE_VIEW)
+		DrawWallWithRings(rightWallX, rightWallY, rightWallZ, wallThickness, wallHeight, groundSize, -90.0f); //right
     glScalef(0.5f, 0.5f, 0.5f);
     SpawnRandomArrows(2, 0.5f);
     DrawPlayer(playerX, playerY, playerZ);
     DrawQuiver(0.5f, 0.5f, -0.5f);
     DrawWindsock(3,2,0.5);
 	DrawTarget(targetPosX,targetPosY,targetPosZ);
+    DrawScoreboard(leftWallX-0.5, 1.5f, backWallZ-1, 0.2f, 1.6f, 1.0f);
+
     glFlush();
 }
 
