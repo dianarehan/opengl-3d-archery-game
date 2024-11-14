@@ -58,7 +58,7 @@ bool isMoving = false;
 
 //target data
 float targetPosX = 0.0f, targetPosY=1.5, targetPosZ=-3;
-float targetSpeed = 0.05f;
+float targetSpeed = 0.01f;
 
 void DrawPole(float x, float y, float z) {
     float poleHeight = 2.0f;
@@ -130,6 +130,17 @@ void DrawTarget(float x, float y, float z) {
     DrawDisk(0.6f, 0.5f, 1.0f, 1.0f, 1.0f); //white
 
     glPopMatrix();
+}
+
+void UpdateTarget(int value) {
+
+    targetPosX += targetSpeed;
+
+    if (targetPosX > rightWallX || targetPosX < leftWallX)
+        targetSpeed = -targetSpeed;
+    
+    glutPostRedisplay();
+    glutTimerFunc(16, UpdateTarget, 0);
 }
 
 void DrawCircle(float x, float y, float radius) {
@@ -587,6 +598,7 @@ void main(int argc, char** argv) {
     InitializeGLUT(argc, argv);
     InitializeCallbacks();
     InitializeOpenGL();
+    UpdateTarget(0);
     glutMainLoop();
     engine->drop();
 }
