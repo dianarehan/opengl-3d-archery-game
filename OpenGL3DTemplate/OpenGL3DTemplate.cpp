@@ -307,6 +307,15 @@ void DrawDisk(float radius, float innerRadius, float red, float green, float blu
     gluDeleteQuadric(quadric);
 }
 
+void DrawSolidCylinder(float radius, float height, float red, float green, float blue) {
+    GLUquadric* quadric = gluNewQuadric();
+
+    glColor3f(red, green, blue);
+    gluCylinder(quadric, radius, radius, height, 100, 1);
+
+    gluDeleteQuadric(quadric);
+}
+
 void DrawTarget(float x, float y, float z) {
 
     glPushMatrix();
@@ -317,7 +326,13 @@ void DrawTarget(float x, float y, float z) {
     DrawDisk(0.4f, 0.3f, 0.0f, 0.0f, 1.0f); //blue
     DrawDisk(0.5f, 0.4f, 0.0f, 0.0f, 0.0f); //black
     DrawDisk(0.6f, 0.5f, 1.0f, 1.0f, 1.0f); //white
-
+    glTranslatef(0, 0, -0.05);
+    DrawSolidCylinder(0.2f, 0.05f, 1.0f, 1.0f, 0.0f); //yellow
+    DrawSolidCylinder(0.3f, 0.05f, 1.0f, 0.0f, 0.0f); //red
+    DrawSolidCylinder(0.4f, 0.05f, 0.0f, 0.0f, 1.0f); //blue
+    DrawSolidCylinder(0.5f, 0.05f, 0.0f, 0.0f, 0.0f); //black
+    DrawSolidCylinder(0.6f, 0.05f, 1.0f, 1.0f, 1.0f); //white
+    glPopMatrix();
     glPopMatrix();
 }
 
