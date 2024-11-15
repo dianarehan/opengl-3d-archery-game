@@ -29,6 +29,12 @@ float rightWallX = groundSize / 2, rightWallY = wallHeight / 2, rightWallZ = 0.0
 float backWallColor[3];
 float leftWallColor[3];
 float rightWallColor[3];
+float predefinedColors[][3] = {
+    {0.8f, 0.8f, 0.8f},
+    {0.9f, 0.9f, 0.8f},
+    {0.8f, 0.7f, 0.7f},
+};
+const int numColors = sizeof(predefinedColors) / sizeof(predefinedColors[0]);
 
 //camera variables for free movement and rotation
 float camX = 0.0f, camY = 2.0f, camZ = 5.5f;
@@ -82,19 +88,43 @@ bool changeColor = false;
 
 void InitializeColors() {
     srand(static_cast<unsigned int>(time(0)));
+
+    int backWallIndex = rand() % numColors;
+    int leftWallIndex;
+    do {
+        leftWallIndex = rand() % numColors;
+    } while (leftWallIndex == backWallIndex);
+
+    int rightWallIndex;
+    do {
+        rightWallIndex = rand() % numColors;
+    } while (rightWallIndex == backWallIndex || rightWallIndex == leftWallIndex);
+
     for (int i = 0; i < 3; ++i) {
-        backWallColor[i] = static_cast<float>(rand()) / RAND_MAX;
-        leftWallColor[i] = static_cast<float>(rand()) / RAND_MAX;
-        rightWallColor[i] = static_cast<float>(rand()) / RAND_MAX;
+        backWallColor[i] = predefinedColors[backWallIndex][i];
+        leftWallColor[i] = predefinedColors[leftWallIndex][i];
+        rightWallColor[i] = predefinedColors[rightWallIndex][i];
     }
 }
 
 void UpdateColors(int value) {
+    int backWallIndex = rand() % numColors;
+    int leftWallIndex;
+    do {
+        leftWallIndex = rand() % numColors;
+    } while (leftWallIndex == backWallIndex);
+
+    int rightWallIndex;
+    do {
+        rightWallIndex = rand() % numColors;
+    } while (rightWallIndex == backWallIndex || rightWallIndex == leftWallIndex);
+
     for (int i = 0; i < 3; ++i) {
-        backWallColor[i] = static_cast<float>(rand()) / RAND_MAX;
-        leftWallColor[i] = static_cast<float>(rand()) / RAND_MAX;
-        rightWallColor[i] = static_cast<float>(rand()) / RAND_MAX;
+        backWallColor[i] = predefinedColors[backWallIndex][i];
+        leftWallColor[i] = predefinedColors[leftWallIndex][i];
+        rightWallColor[i] = predefinedColors[rightWallIndex][i];
     }
+
     glutTimerFunc(5000, UpdateColors, 0);
 }
 
@@ -944,7 +974,7 @@ void Display(void) {
         if (currentView != SIDE_VIEW) {
             glColor3f(rightWallColor[0], rightWallColor[1], rightWallColor[2]);
             DrawWallWithRings(rightWallX, rightWallY, rightWallZ, wallThickness, wallHeight, groundSize, -90.0f); //right
-            
+        
             glPushMatrix();
             glColor3f(0.1686f, 0.0314f, 0.1176f);
             DrawWall(rightWallX, rightWallY + wallHeight / 1.82, rightWallZ, wallThickness, 0.3f, groundSize); //right celing
