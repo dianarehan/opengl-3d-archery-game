@@ -44,10 +44,12 @@ void InitializeGLUT(int argc, char** argv);
 void InitializeCallbacks();
 void InitializeOpenGL();
 void playSound(const char* soundFile);
-void InitializeSound();
 
 //sound data
-ISoundEngine* engine;
+irrklang::ISoundEngine* engine = irrklang::createIrrKlangDevice();
+irrklang::ISound* backgroundSound = nullptr;
+bool hasPlayedWinSound = false;
+bool hasPlayedLoseSound = false;
 
 //game data
 bool isTimeUp = false;
@@ -665,6 +667,7 @@ void Update(int value) {
             arrowPosY <= targetPosY + 0.17f && arrowPosY >= targetPosY - 0.17f) {
             isArrowActive = false;
             score += 10;
+			playSound("win1.wav");
             if(score>=120)
 			    winGame = true;
         }
@@ -691,6 +694,7 @@ void Update(int value) {
 }
 
 void Keyboard(unsigned char key, int x, int y) {
+    if (isTimeUp) return;
     const float moveSpeed = 0.1f;
     const float turnSpeed = 0.05f;
 
@@ -745,6 +749,7 @@ void Keyboard(unsigned char key, int x, int y) {
 		isMoving = !isMoving;
         if (isMoving) {
             UpdateWind(0);
+			playSound("flag.wav");
         }
         break;
     case ' ':
@@ -753,13 +758,18 @@ void Keyboard(unsigned char key, int x, int y) {
             arrowPosX = playerX;
             arrowPosY = playerY+0.5;
             arrowPosZ = playerZ;
+            playSound("arrow-shoot.wav");
         }
         break;
 	case '2':
 		moveQuiver = !moveQuiver;
+		if (moveQuiver)
+            playSound("arrows-move.wav");
 		break;
     case '3':
 		changeColor = !changeColor;
+		if (changeColor)
+		    playSound("color-change.wav");
 		break;
     }
 	printf("my score is %d\n", score);
@@ -794,6 +804,7 @@ void SetCamera() {
 }
 
 void SpecialKeys(int key, int x, int y) {
+    if (isTimeUp) return;
     switch (key) {
     case GLUT_KEY_LEFT: moveLeft = true; break;
     case GLUT_KEY_RIGHT: moveRight = true; break;
@@ -804,6 +815,7 @@ void SpecialKeys(int key, int x, int y) {
 }
 
 void SpecialKeysUp(int key, int x, int y) {
+    if (isTimeUp) return;
     switch (key) {
     case GLUT_KEY_LEFT: moveLeft = false; break;
     case GLUT_KEY_RIGHT: moveRight = false; break;
@@ -863,10 +875,23 @@ void Render2DText(int score, float timeLeft,bool gameWin, bool gameLose) {
 void Display(void) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	//update the camera freely or to one of the views
+    if (isTimeUp && backgroundSound) {
+        backgroundSound->stop();
+        backgroundSound->drop();
+        backgroundSound = nullptr;
+    }
+    if (isTimeUp && !winGame && !hasPlayedLoseSound) {
+        playSound("lose.wav");
+        hasPlayedLoseSound = true;
+    }
+    if (winGame && isTimeUp && !hasPlayedWinSound) {
+        playSound("win.wav");
+        hasPlayedWinSound = true;
+    }
+    //update the camera freely or to one of the views
     SetCamera();
     if (winGame && isTimeUp) Render2DText(score, 0, true, false);
-	else if (isTimeUp && !winGame) Render2DText(score,0,false,true);
+    else if (isTimeUp && !winGame) Render2DText(score, 0, false, true);
     else {
         glColor3f(0.125f, 0.271f, 0.094f);
         DrawGround(0.0f, 0.0f, 0.0f, groundSize); //ground
@@ -923,13 +948,14 @@ void Anim() {
 }
 
 void main(int argc, char** argv) {
-	InitializeSound();
     InitializeGLUT(argc, argv);
     InitializeOpenGL();
     InitializeCallbacks();
     UpdateTarget(0);
     Update(0);
-
+	if (!backgroundSound)
+        backgroundSound= engine->play2D("bg_sound.wav", false, false, true);
+    
     glutMainLoop();
     engine->drop();
 }
@@ -944,6 +970,7 @@ void InitializeGLUT(int argc, char** argv) {
 
 void InitializeCallbacks() {
     glutDisplayFunc(Display);
+    if (isTimeUp) return;
     glutIdleFunc(Anim);
     glutKeyboardFunc(Keyboard);
     glutSpecialFunc(SpecialKeys);
@@ -968,17 +995,3 @@ void playSound(const char* soundFile) {
         engine->play2D(soundFile, false, false, true);
     }
 }
-
-void InitializeSound() {
-    engine = createIrrKlangDevice();
-    if (!engine) {
-        std::cerr << "Could not initialize irrKlang!" << std::endl;
-    }
-}
-
-/*std::thread soundThread1(playSound, "bg_sound.wav");
-    std::thread soundThread2(playSound, "lose.wav");
-
-    // Wait for the threads to finish
-    soundThread1.join();
-    soundThread2.join();*/
