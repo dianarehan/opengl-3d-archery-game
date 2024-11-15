@@ -49,7 +49,7 @@ bool moveBackward = false;
 void InitializeGLUT(int argc, char** argv);
 void InitializeCallbacks();
 void InitializeOpenGL();
-void playSound(const char* soundFile);
+void playSound(const char* soundFile, bool loop=false);
 
 //sound data
 irrklang::ISoundEngine* engine = irrklang::createIrrKlangDevice();
@@ -697,7 +697,7 @@ void Update(int value) {
             arrowPosY <= targetPosY + 0.17f && arrowPosY >= targetPosY - 0.17f) {
             isArrowActive = false;
             score += 10;
-			playSound("win1.wav");
+			playSound("win1.wav",false);
             if(score>=120)
 			    winGame = true;
         }
@@ -779,7 +779,7 @@ void Keyboard(unsigned char key, int x, int y) {
 		isMoving = !isMoving;
         if (isMoving) {
             UpdateWind(0);
-			playSound("flag.wav");
+			playSound("flag.wav",false);
         }
         break;
     case ' ':
@@ -788,18 +788,18 @@ void Keyboard(unsigned char key, int x, int y) {
             arrowPosX = playerX;
             arrowPosY = playerY+0.5;
             arrowPosZ = playerZ;
-            playSound("arrow-shoot.wav");
+            playSound("arrow-shoot.wav",false);
         }
         break;
 	case '2':
 		moveQuiver = !moveQuiver;
 		if (moveQuiver)
-            playSound("arrows-move.wav");
+            playSound("arrows-move.wav",false);
 		break;
     case '3':
 		changeColor = !changeColor;
 		if (changeColor)
-		    playSound("color-change.wav");
+		    playSound("color-change.wav",false);
 		break;
     }
 	printf("my score is %d\n", score);
@@ -911,11 +911,11 @@ void Display(void) {
         backgroundSound = nullptr;
     }
     if (isTimeUp && !winGame && !hasPlayedLoseSound) {
-        playSound("lose.wav");
+        playSound("lose.wav",true);
         hasPlayedLoseSound = true;
     }
     if (winGame && isTimeUp && !hasPlayedWinSound) {
-        playSound("win.wav");
+        playSound("win.wav",true);
         hasPlayedWinSound = true;
     }
     //update the camera freely or to one of the views
@@ -1022,8 +1022,8 @@ void InitializeOpenGL() {
     gluLookAt(camX, camY, camZ, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 }
 
-void playSound(const char* soundFile) {
+void playSound(const char* soundFile,bool loop) {
     if (engine) {
-        engine->play2D(soundFile, false, false, true);
+        engine->play2D(soundFile, loop, false, true);
     }
 }
