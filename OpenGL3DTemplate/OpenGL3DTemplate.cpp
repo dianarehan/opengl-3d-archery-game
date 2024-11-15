@@ -207,13 +207,6 @@ void DrawPodium(float posX, float posY, float posZ, float rotationAngle) {
     glPopMatrix();
 }
 
-void RenderText(float x, float y, const char* text) {
-    glRasterPos2f(x, y);
-    while (*text) {
-        glutBitmapCharacter(GLUT_BITMAP_9_BY_15, *text++);
-    }
-}
-
 void DrawScoreboard(float x, float y, float z, float thickness, float width, float height) {
 
     glColor3f(0.0f, 0.0f, 0.0f);
@@ -797,18 +790,6 @@ void SetCamera() {
     case FREE_VIEW:
         gluLookAt(camX, camY, camZ, camX + sin(camYaw), camY + sin(camPitch), camZ - cos(camYaw), 0.0f, 1.0f, 0.0f);
         break;
-    }
-}
-
-void SpawnRandomArrows(int numArrows, float arrowLength) {
-    srand(static_cast<unsigned>(time(0)));
-
-    for (int i = 0; i < numArrows; ++i) {
-        float x = (static_cast<float>(rand()) / RAND_MAX) * groundSize;
-        float z = (static_cast<float>(rand()) / RAND_MAX) * groundSize;
-        float y = 0.23; //avoid z-fighting
-
-        DrawTargetArrow();
     }
 }
 
