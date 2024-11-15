@@ -25,6 +25,11 @@ float backWallX = 0.0f, backWallY = wallHeight / 2, backWallZ = -groundSize / 2;
 float leftWallX = -groundSize / 2, leftWallY = wallHeight / 2, leftWallZ = 0.0f;
 float rightWallX = groundSize / 2, rightWallY = wallHeight / 2, rightWallZ = 0.0f;
 
+//wall colors
+float backWallColor[3];
+float leftWallColor[3];
+float rightWallColor[3];
+
 //camera variables for free movement and rotation
 float camX = 0.0f, camY = 2.0f, camZ = 5.5f;
 float camYaw = 0.0f, camPitch = -0.2f;
@@ -74,6 +79,24 @@ bool moveQuiver = false;
 
 //podium data
 bool changeColor = false;
+
+void InitializeColors() {
+    srand(static_cast<unsigned int>(time(0)));
+    for (int i = 0; i < 3; ++i) {
+        backWallColor[i] = static_cast<float>(rand()) / RAND_MAX;
+        leftWallColor[i] = static_cast<float>(rand()) / RAND_MAX;
+        rightWallColor[i] = static_cast<float>(rand()) / RAND_MAX;
+    }
+}
+
+void UpdateColors(int value) {
+    for (int i = 0; i < 3; ++i) {
+        backWallColor[i] = static_cast<float>(rand()) / RAND_MAX;
+        leftWallColor[i] = static_cast<float>(rand()) / RAND_MAX;
+        rightWallColor[i] = static_cast<float>(rand()) / RAND_MAX;
+    }
+    glutTimerFunc(5000, UpdateColors, 0);
+}
 
 void DrawNumber1(float x, float y) {
     glBegin(GL_QUADS);
@@ -912,16 +935,16 @@ void Display(void) {
         glRotatef(90, 0.0f, 1.0f, 0.0f);
         glPopMatrix();
 
-        glColor3f(0.8f, 0.8f, 0.8f);
+        glColor3f(backWallColor[0], backWallColor[1], backWallColor[2]);
         DrawWallWithRings(backWallX, backWallY, backWallZ, groundSize, wallHeight, wallThickness); //back
 
-        glColor3f(0.9f, 0.9f, 0.8f);
+        glColor3f(leftWallColor[0], leftWallColor[1], leftWallColor[2]);
         DrawWallWithRings(leftWallX, leftWallY, leftWallZ, wallThickness, wallHeight, groundSize, 90.0f); //left
 
         if (currentView != SIDE_VIEW) {
-            glColor3f(0.8f, 0.7f, 0.7f);
+            glColor3f(rightWallColor[0], rightWallColor[1], rightWallColor[2]);
             DrawWallWithRings(rightWallX, rightWallY, rightWallZ, wallThickness, wallHeight, groundSize, -90.0f); //right
-
+            
             glPushMatrix();
             glColor3f(0.1686f, 0.0314f, 0.1176f);
             DrawWall(rightWallX, rightWallY + wallHeight / 1.82, rightWallZ, wallThickness, 0.3f, groundSize); //right celing
@@ -959,6 +982,8 @@ void main(int argc, char** argv) {
     InitializeOpenGL();
     InitializeCallbacks();
     UpdateTarget(0);
+    InitializeColors();
+    UpdateColors(0);
     Update(0);
 	if (!backgroundSound)
         backgroundSound= engine->play2D("bg_sound.wav", false, false, true);
