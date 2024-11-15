@@ -52,7 +52,7 @@ ISoundEngine* engine;
 //game data
 bool isTimeUp = false;
 int score = 0;
-float timeRemaining = 60.0f;
+float timeRemaining = 30.0f;
 static float elapsedTime = 0.0f;
 bool winGame = false;
 
@@ -831,7 +831,7 @@ void SpecialKeysUp(int key, int x, int y) {
     }
 }
 
-void RenderScoreAndTime(int score, float timeLeft) {
+void Render2DText(int score, float timeLeft,bool gameWin, bool gameLose) {
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
@@ -840,17 +840,37 @@ void RenderScoreAndTime(int score, float timeLeft) {
 	glPushMatrix();
 	glLoadIdentity();
 
-    glColor3f(0.0f, 0.0f, 0.0f);
-    glRasterPos2f(50.0f, 530.0f);
-    std::string scoreText = "Score: " + std::to_string(score);
-    for (char c : scoreText) {
-        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
+    if (gameLose) {
+        glColor3f(1.0f, 0.0f, 0.0f);
+        glRasterPos2f(xCord / 2.0-100, yCord / 2.0);
+        char message[50];
+        sprintf(message, "Game Lose,\n\n with a score of %d", score);
+        for (char* c = message; *c != '\0'; c++) {
+            glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *c);
+        }
     }
-    glColor3f(0.0f, 0.0f, 0.0f);
-    glRasterPos2f(50.0f, 500.0f);
-    std::string timeText = "Time: " + std::to_string(static_cast<int>(timeLeft));
-    for (char c : timeText) {
-        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
+    else if (gameWin) {
+        glColor3f(0.1137f, 0.6118f, 0.0980f);
+        glRasterPos2f(xCord / 2.0-100, yCord / 2.0);
+        char message[50];
+        sprintf(message, "Game Win,\n\n with a score of %d", score);
+        for (char* c = message; *c != '\0'; c++) {
+            glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *c);
+        }
+    }
+    else {
+        glColor3f(0.0f, 0.0f, 0.0f);
+        glRasterPos2f(50.0f, 530.0f);
+        std::string scoreText = "Score: " + std::to_string(score);
+        for (char c : scoreText) {
+            glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
+        }
+        glColor3f(0.0f, 0.0f, 0.0f);
+        glRasterPos2f(50.0f, 500.0f);
+        std::string timeText = "Time: " + std::to_string(static_cast<int>(timeLeft));
+        for (char c : timeText) {
+            glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
+        }
     }
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
@@ -864,45 +884,48 @@ void Display(void) {
 
 	//update the camera freely or to one of the views
     SetCamera();
+    if (winGame && isTimeUp) Render2DText(score, 0, true, false);
+	else if (isTimeUp && !winGame) Render2DText(score,0,false,true);
+    else {
+        glColor3f(0.125f, 0.271f, 0.094f);
+        DrawGround(0.0f, 0.0f, 0.0f, groundSize); //ground
 
-    glColor3f(0.125f, 0.271f, 0.094f);
-    DrawGround(0.0f, 0.0f, 0.0f, groundSize); //ground
-
-    glColor3f(0.3608f, 0.0706f, 0.2510f);
-	DrawWall(backWallX, backWallY + wallHeight / 1.82, backWallZ, groundSize, 0.3f, wallThickness + 0.1); //back ceiling
-
-	glPushMatrix();
-    glColor3f(0.1686f, 0.0314f, 0.1176f);
-	DrawWall(leftWallX, leftWallY + wallHeight / 1.82, leftWallZ, wallThickness, 0.3f, groundSize); //left ceiling
-    glRotatef(90, 0.0f, 1.0f, 0.0f);
-	glPopMatrix();  
-
-    glColor3f(0.8f, 0.8f, 0.8f);
-    DrawWallWithRings(backWallX, backWallY, backWallZ, groundSize, wallHeight, wallThickness); //back
-
-    glColor3f(0.9f, 0.9f, 0.8f);
-    DrawWallWithRings(leftWallX, leftWallY, leftWallZ, wallThickness, wallHeight, groundSize, 90.0f); //left
-
-    if (currentView != SIDE_VIEW) {
-        glColor3f(0.8f, 0.7f, 0.7f);
-        DrawWallWithRings(rightWallX, rightWallY, rightWallZ, wallThickness, wallHeight, groundSize, -90.0f); //right
+        glColor3f(0.3608f, 0.0706f, 0.2510f);
+        DrawWall(backWallX, backWallY + wallHeight / 1.82, backWallZ, groundSize, 0.3f, wallThickness + 0.1); //back ceiling
 
         glPushMatrix();
         glColor3f(0.1686f, 0.0314f, 0.1176f);
-        DrawWall(rightWallX, rightWallY + wallHeight / 1.82, rightWallZ, wallThickness, 0.3f, groundSize); //right celing
-        glRotatef(-90, 0.0f, 1.0f, 0.0f);
+        DrawWall(leftWallX, leftWallY + wallHeight / 1.82, leftWallZ, wallThickness, 0.3f, groundSize); //left ceiling
+        glRotatef(90, 0.0f, 1.0f, 0.0f);
         glPopMatrix();
 
+        glColor3f(0.8f, 0.8f, 0.8f);
+        DrawWallWithRings(backWallX, backWallY, backWallZ, groundSize, wallHeight, wallThickness); //back
+
+        glColor3f(0.9f, 0.9f, 0.8f);
+        DrawWallWithRings(leftWallX, leftWallY, leftWallZ, wallThickness, wallHeight, groundSize, 90.0f); //left
+
+        if (currentView != SIDE_VIEW) {
+            glColor3f(0.8f, 0.7f, 0.7f);
+            DrawWallWithRings(rightWallX, rightWallY, rightWallZ, wallThickness, wallHeight, groundSize, -90.0f); //right
+
+            glPushMatrix();
+            glColor3f(0.1686f, 0.0314f, 0.1176f);
+            DrawWall(rightWallX, rightWallY + wallHeight / 1.82, rightWallZ, wallThickness, 0.3f, groundSize); //right celing
+            glRotatef(-90, 0.0f, 1.0f, 0.0f);
+            glPopMatrix();
+
+        }
+        glScalef(0.5f, 0.5f, 0.5f);
+        DrawPlayer(playerX, playerY, playerZ);
+        DrawQuiver(3.0f, 0.5f, 3.0f);
+        DrawWindsock(3, 2, 0.5);
+        DrawTarget(targetPosX, targetPosY, targetPosZ);
+        DrawScoreboard(leftWallX - 0.5, 1.5f, backWallZ - 1, 0.2f, 1.6f, 1.0f);
+        DrawPodium(-2.6f, 0.5f, 2.0f, 45.0f);
+        DrawTargetArrow();
+        Render2DText(score, timeRemaining,false,false);
     }
-    glScalef(0.5f, 0.5f, 0.5f);
-    DrawPlayer(playerX, playerY, playerZ);
-    DrawQuiver(3.0f, 0.5f, 3.0f);
-    DrawWindsock(3,2,0.5);
-	DrawTarget(targetPosX,targetPosY,targetPosZ);
-    DrawScoreboard(leftWallX-0.5, 1.5f, backWallZ-1, 0.2f, 1.6f, 1.0f);
-    DrawPodium(-2.6f, 0.5f, 2.0f, 45.0f);
-    DrawTargetArrow();
-	RenderScoreAndTime(score, timeRemaining);
     glFlush();
 }
 
