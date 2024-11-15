@@ -67,6 +67,8 @@ bool isArrowActive = false;
 float arrowPosX, arrowPosY, arrowPosZ;
 float arrowSpeed = 0.1f;
 bool moveQuiver = false;
+//podium data
+bool changeColor = false;
 
 void DrawNumber1(float x, float y) {
     glBegin(GL_QUADS);
@@ -186,8 +188,16 @@ void DrawPodium(float posX, float posY, float posZ, float rotationAngle) {
     glScalef(1.0f, 0.15f, 1.0f);
     glutSolidCube(1.0);
     glPopMatrix();
-
-    glColor3f(1.0f, 1.0f, 0.0f);//yellow
+    std::srand(static_cast<unsigned>(std::time(nullptr)));
+	if (changeColor) {
+        float red = static_cast<float>(std::rand()) / RAND_MAX;
+        float green = static_cast<float>(std::rand()) / RAND_MAX;
+        float blue = static_cast<float>(std::rand()) / RAND_MAX;
+        glColor3f(red, green, blue);
+    }
+	else {
+        glColor3f(1.0f, 1.0f, 0.0f);//yellow
+	}
     DrawNumber1(-0.05f, 0.1f);
     DrawNumber2(-1.2f, -0.1f);
     DrawNumber3(0.9f, -0.2f);
@@ -748,6 +758,9 @@ void Keyboard(unsigned char key, int x, int y) {
         break;
 	case '2':
 		moveQuiver = !moveQuiver;
+		break;
+    case '3':
+		changeColor = !changeColor;
 		break;
     }
 	printf("my score is %d\n", score);
