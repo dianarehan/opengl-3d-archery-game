@@ -34,6 +34,7 @@ View currentView = FREE_VIEW;
 //player position and rotation
 float playerX = 0.0f, playerY = 1.0f, playerZ = 0.0f;
 float playerRotation = 0.0f;
+float currentRotation = 0.0f;
 bool moveLeft = false;
 bool moveRight = false;
 bool moveForward = false;
@@ -499,19 +500,25 @@ void MovePlayer(float deltaTime) {
     if (moveLeft&&playerX>=-groundSize+6*wallThickness) {
         playerX -= moveSpeed * deltaTime;
         playerRotation = -90.0f; //left
+        currentRotation = playerRotation;
     }
     if (moveRight&&playerX<=groundSize-6*wallThickness) {
         playerX += moveSpeed * deltaTime;
         playerRotation = 90.0f; //right
+        currentRotation = playerRotation;
     }
     if (moveForward&&playerZ>=-groundSize+6*wallThickness) {
         playerZ -= moveSpeed * deltaTime;
         playerRotation = 180.0f; //(positive Z)
+        currentRotation = playerRotation;
     }
     if (moveBackward&&playerZ<=groundSize-6*wallThickness) {
         playerZ += moveSpeed * deltaTime;
         playerRotation = 0.0; //backward
+        currentRotation = playerRotation;
     }
+    if(isArrowActive) playerRotation = 180.0;
+    else playerRotation=currentRotation; 
 }
 
 void DrawPlayer(float x, float y, float z) {
