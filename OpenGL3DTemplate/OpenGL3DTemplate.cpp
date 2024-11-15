@@ -663,9 +663,9 @@ void DrawWallWithRings(float x, float y, float z, float width, float height, flo
     else if (rotationAngle == -90.0f) {
         // Right wall
 		glScaled(1.0f, 1.0f, -1.0f); //reflecting on z axis
-        glTranslatef(-thickness / 2 + 0.06f, y, z); //slightly in front of the wall
+        glTranslatef(-thickness / 2 + 0.06f, y, z);
     }
-    glRotatef(rotationAngle, 0.0f, 1.0f, 0.0f); // Rotate the rings to align with the wall
+    glRotatef(rotationAngle, 0.0f, 1.0f, 0.0f);
 	glScaled(0.5f, 0.5f, 0.5f);
     DrawOlympicRings();
     glPopMatrix();
@@ -834,15 +834,33 @@ void Display(void) {
     glColor3f(0.125f, 0.271f, 0.094f);
     DrawGround(0.0f, 0.0f, 0.0f, groundSize); //ground
 
+    glColor3f(0.3608f, 0.0706f, 0.2510f);
+	DrawWall(backWallX, backWallY + wallHeight / 1.82, backWallZ, groundSize, 0.3f, wallThickness + 0.1); //back ceiling
+
+	glPushMatrix();
+    glColor3f(0.1686f, 0.0314f, 0.1176f);
+	DrawWall(leftWallX, leftWallY + wallHeight / 1.82, leftWallZ, wallThickness, 0.3f, groundSize); //left ceiling
+    glRotatef(90, 0.0f, 1.0f, 0.0f);
+	glPopMatrix();  
+
     glColor3f(0.8f, 0.8f, 0.8f);
     DrawWallWithRings(backWallX, backWallY, backWallZ, groundSize, wallHeight, wallThickness); //back
+
     glColor3f(0.9f, 0.9f, 0.8f);
     DrawWallWithRings(leftWallX, leftWallY, leftWallZ, wallThickness, wallHeight, groundSize, 90.0f); //left
-    glColor3f(0.8f, 0.7f, 0.7f);
-	if (currentView != SIDE_VIEW)
-		DrawWallWithRings(rightWallX, rightWallY, rightWallZ, wallThickness, wallHeight, groundSize, -90.0f); //right
+
+    if (currentView != SIDE_VIEW) {
+        glColor3f(0.8f, 0.7f, 0.7f);
+        DrawWallWithRings(rightWallX, rightWallY, rightWallZ, wallThickness, wallHeight, groundSize, -90.0f); //right
+
+        glPushMatrix();
+        glColor3f(0.1686f, 0.0314f, 0.1176f);
+        DrawWall(rightWallX, rightWallY + wallHeight / 1.82, rightWallZ, wallThickness, 0.3f, groundSize); //right celing
+        glRotatef(-90, 0.0f, 1.0f, 0.0f);
+        glPopMatrix();
+
+    }
     glScalef(0.5f, 0.5f, 0.5f);
-    //SpawnRandomArrows(2, 0.5f);
     DrawPlayer(playerX, playerY, playerZ);
     DrawQuiver(3.0f, 0.5f, 3.0f);
     DrawWindsock(3,2,0.5);
