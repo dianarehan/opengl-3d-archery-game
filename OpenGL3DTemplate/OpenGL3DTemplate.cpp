@@ -50,10 +50,11 @@ void InitializeSound();
 ISoundEngine* engine;
 
 //game data
-bool isGameOver = false;
 bool isTimeUp = false;
 int score = 0;
 float timeRemaining = 60.0f;
+static float elapsedTime = 0.0f;
+bool winGame = false;
 
 //windsock data
 float windDirection = 45.0f;
@@ -67,6 +68,7 @@ bool isArrowActive = false;
 float arrowPosX, arrowPosY, arrowPosZ;
 float arrowSpeed = 0.1f;
 bool moveQuiver = false;
+
 //podium data
 bool changeColor = false;
 
@@ -251,16 +253,6 @@ void DrawScoreboard(float x, float y, float z, float thickness, float width, flo
     glTranslatef(x, y + height / 2.0f + 0.2f, z - thickness / 2.0f);
     glutSolidTorus(0.05, 0.2, 20, 20);
     glPopMatrix();
-    // Draw the score label
-    glColor3f(1.0f, 1.0f, 1.0f); // White color for text
-    std::stringstream scoreText;
-    scoreText << "Score: " << score;
-    RenderText(x + 0.7f, y + 0.3f, scoreText.str().c_str());
-
-    // Draw the timer label
-    std::stringstream timerText;
-    timerText << "Time: " << static_cast<int>(timeRemaining);
-    RenderText(x - 0.7f, y + 0.1f, timerText.str().c_str());
 }
 
 void DrawPole(float x, float y, float z) {
@@ -675,15 +667,29 @@ void Update(int value) {
     if (isArrowActive) {
         arrowPosZ -= arrowSpeed;
 
-        if (arrowPosZ <= targetPosZ + 0.1f && arrowPosZ >= targetPosZ - 0.1f &&
-            arrowPosX <= targetPosX + 0.1f && arrowPosX >= targetPosX - 0.1f &&
-            arrowPosY <= targetPosY + 0.1f && arrowPosY >= targetPosY - 0.1f) {
+        if (arrowPosZ <= targetPosZ + 0.17f && arrowPosZ >= targetPosZ - 0.17f &&
+            arrowPosX <= targetPosX + 0.17f && arrowPosX >= targetPosX - 0.17f &&
+            arrowPosY <= targetPosY + 0.17f && arrowPosY >= targetPosY - 0.17f) {
             isArrowActive = false;
             score += 10;
+            if(score>=120)
+			    winGame = true;
         }
 
         if (arrowPosZ < -groundSize) {
             isArrowActive = false;
+        }
+    }
+    elapsedTime += 0.016f;
+
+    if (elapsedTime >= 1.0f) {
+        elapsedTime = 0.0f;
+        if (timeRemaining > 0) {
+            timeRemaining -= 1.0f;
+            if (timeRemaining <= 0) {
+                timeRemaining = 0;
+                isTimeUp = true;
+            }
         }
     }
 
@@ -825,6 +831,34 @@ void SpecialKeysUp(int key, int x, int y) {
     }
 }
 
+void RenderScoreAndTime(int score, float timeLeft) {
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+    gluOrtho2D(0.0, 800.0, 0.0, 600.0);
+    glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+
+    glColor3f(0.0f, 0.0f, 0.0f);
+    glRasterPos2f(50.0f, 530.0f);
+    std::string scoreText = "Score: " + std::to_string(score);
+    for (char c : scoreText) {
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
+    }
+    glColor3f(0.0f, 0.0f, 0.0f);
+    glRasterPos2f(50.0f, 500.0f);
+    std::string timeText = "Time: " + std::to_string(static_cast<int>(timeLeft));
+    for (char c : timeText) {
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
+    }
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
+
+}
+
 void Display(void) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -868,6 +902,7 @@ void Display(void) {
     DrawScoreboard(leftWallX-0.5, 1.5f, backWallZ-1, 0.2f, 1.6f, 1.0f);
     DrawPodium(-2.6f, 0.5f, 2.0f, 45.0f);
     DrawTargetArrow();
+	RenderScoreAndTime(score, timeRemaining);
     glFlush();
 }
 
@@ -886,8 +921,8 @@ void Anim() {
 void main(int argc, char** argv) {
 	InitializeSound();
     InitializeGLUT(argc, argv);
-    InitializeCallbacks();
     InitializeOpenGL();
+    InitializeCallbacks();
     UpdateTarget(0);
     Update(0);
 
