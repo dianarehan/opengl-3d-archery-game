@@ -418,40 +418,45 @@ void DrawTargetArrow() {
 void DrawQuiver(float x, float y, float z) {
     GLUquadricObj* quad = gluNewQuadric();
 
-    // Draw the quiver body (cylinder)
     glPushMatrix();
-    glTranslatef(x, y, z);
-    glColor3f(0.4f, 0.2f, 0.1f);  // Brownish color for the quiver
+    glTranslatef(x, y+0.5, z);
+    glColor3f(0.4f, 0.2f, 0.1f);
     glRotatef(90, 1.0f, 0.0f, 0.0f);
-    gluCylinder(quad, 0.15f, 0.15f, 0.5f, 32, 32);
+    gluCylinder(quad, 0.35f, 0.35f, 1.0f, 32, 32);
     glPopMatrix();
-
-    // Draw the quiver's bottom cap
     glPushMatrix();
-    glTranslatef(x, y, z);
+    glTranslatef(x, y-0.5, z);
     glRotatef(90, 1.0f, 0.0f, 0.0f);
-    gluDisk(quad, 0.0f, 0.15f, 32, 1);
+    gluDisk(quad, 0.0f, 0.35f, 32, 1);
     glPopMatrix();
 
     int arrowCount = 5;
-    float arrowSpacing = 0.05f; // Vertical distance between arrows
     for (int i = 0; i < arrowCount; i++) {
-        // Slight vertical and horizontal offset to create a natural stacked appearance
-        float offsetY = y + 0.2f + (i * arrowSpacing);  // Base offset for vertical position
-        // Optional: Add small variation for horizontal offsets within the quiver
-        float offsetX = x + (i % 2 == 0 ? 0.02f : -0.02f);  // Alternate small horizontal offset
-        float offsetZ = z + (i % 2 == 0 ? 0.02f : -0.02f);  // Alternate small horizontal offset
+        float offsetX = x + (i % 2 == 0 ? 0.2f / (i + 1) : -0.3f / (i + 1));
+        float offsetZ = z + (i % 2 == 0 ? -0.2f/(i+1) : 0.3f / (i + 1)); 
 
         glPushMatrix();
-        glTranslatef(offsetX, y, offsetZ);  // Apply calculated offsets for arrow positions
-        glRotatef(-90, 1.0f, 0.0f, 0.0f);  // Point arrows upwards along the quiver's axis
-        glScaled(0.4f, 1.0f, 0.4f);    // Scale arrows to fit inside the quiver
-        DrawTargetArrow();
+        glTranslatef(offsetX, y, offsetZ);
+        glRotatef(-90, 1.0f, 0.0f, 0.0f);
+        glScaled(1.0f, 2.0f, 1.0f);
+        GLUquadricObj* quadratic = gluNewQuadric();
+        glPushMatrix();
+        glTranslatef(0, 0, 0.2f);
+        glColor3f(0.2588f, 0.2431f, 0.2510f); // dark grey
+        gluCylinder(quadratic, 0.02f, 0.02f, 0.5f, 32, 32);
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslatef(0, 0,0.7f);
+        glColor3f(1.0f, 0.0f, 0.0f);
+        gluCylinder(quadratic, 0.05f, 0.0f, 0.1f, 32, 32);
+        glPopMatrix();
         glPopMatrix();
     }
 
     gluDeleteQuadric(quad);
 }
+
 
 void DrawBow(float x, float y, float z) {
     glPushMatrix();
@@ -816,7 +821,7 @@ void Display(void) {
     glScalef(0.5f, 0.5f, 0.5f);
     //SpawnRandomArrows(2, 0.5f);
     DrawPlayer(playerX, playerY, playerZ);
-    DrawQuiver(0.5f, 0.5f, -0.5f);
+    DrawQuiver(3.0f, 0.5f, 3.0f);
     DrawWindsock(3,2,0.5);
 	DrawTarget(targetPosX,targetPosY,targetPosZ);
     DrawScoreboard(leftWallX-0.5, 1.5f, backWallZ-1, 0.2f, 1.6f, 1.0f);
