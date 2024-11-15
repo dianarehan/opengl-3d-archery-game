@@ -453,10 +453,8 @@ void DrawQuiver(float x, float y, float z) {
         glPopMatrix();
         glPopMatrix();
     }
-
     gluDeleteQuadric(quad);
 }
-
 
 void DrawBow(float x, float y, float z) {
     glPushMatrix();
