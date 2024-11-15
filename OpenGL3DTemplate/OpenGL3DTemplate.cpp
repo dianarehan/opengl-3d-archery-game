@@ -66,7 +66,7 @@ float targetSpeed = 0.01f;
 bool isArrowActive = false;
 float arrowPosX, arrowPosY, arrowPosZ;
 float arrowSpeed = 0.1f;
-
+bool moveQuiver = false;
 
 void DrawNumber1(float x, float y) {
     glBegin(GL_QUADS);
@@ -430,11 +430,20 @@ void DrawQuiver(float x, float y, float z) {
     gluDisk(quad, 0.0f, 0.35f, 32, 1);
     glPopMatrix();
 
+    
     int arrowCount = 5;
+    std::srand(std::time(nullptr));
     for (int i = 0; i < arrowCount; i++) {
-        float offsetX = x + (i % 2 == 0 ? 0.2f / (i + 1) : -0.3f / (i + 1));
-        float offsetZ = z + (i % 2 == 0 ? -0.2f/(i+1) : 0.3f / (i + 1)); 
+		float offsetX, offsetZ;
 
+        if (moveQuiver) {
+            offsetX = x + (i % 2 == 0? (std::rand() % 30 - 10) / 80.0f: -(std::rand() % 30 - 10) / 80.0f);
+            offsetZ = z + (i % 2 == 0 ? (std::rand() % 30 - 10) / 80.0f : -(std::rand() % 30 - 10) / 80.0f);
+        }
+        else {
+            offsetX = x + (i % 2 == 0 ? 0.2f / (i + 1) : -0.3f / (i + 1));
+            offsetZ = z + (i % 2 == 0 ? -0.2f / (i + 1) : 0.3f / (i + 1));
+        }
         glPushMatrix();
         glTranslatef(offsetX, y, offsetZ);
         glRotatef(-90, 1.0f, 0.0f, 0.0f);
@@ -737,6 +746,9 @@ void Keyboard(unsigned char key, int x, int y) {
             arrowPosZ = playerZ;
         }
         break;
+	case '2':
+		moveQuiver = !moveQuiver;
+		break;
     }
 	printf("my score is %d\n", score);
 	printf("camX: %f, camY: %f, camZ: %f, camYaw: %f, camPitch: %f\n", camX, camY, camZ, camYaw, camPitch);
