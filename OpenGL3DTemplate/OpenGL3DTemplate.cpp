@@ -974,18 +974,18 @@ void Render2DText(int score, float timeLeft,bool gameWin, bool gameLose) {
 
     if (gameLose) {
         glColor3f(1.0f, 0.0f, 0.0f);
-        glRasterPos2f(xCord / 2.0-100, yCord / 2.0);
+        glRasterPos2f(xCord / 2.0-200, yCord / 2.0);
         char message[50];
-        sprintf(message, "Game Lose,\n\n with a score of %d", score);
+        sprintf(message, "Game Lose, with a score of %d", score);
         for (char* c = message; *c != '\0'; c++) {
             glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *c);
         }
     }
     else if (gameWin) {
         glColor3f(0.1137f, 0.6118f, 0.0980f);
-        glRasterPos2f(xCord / 2.0-100, yCord / 2.0);
+        glRasterPos2f(xCord / 2.0-200, yCord / 2.0);
         char message[50];
-        sprintf(message, "Game Win,\n\n with a score of %d", score);
+        sprintf(message, "Game Win, with a score of %d", score);
         for (char* c = message; *c != '\0'; c++) {
             glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *c);
         }
