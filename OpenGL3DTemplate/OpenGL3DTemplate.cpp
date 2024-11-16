@@ -87,6 +87,9 @@ bool moveTarget = false;
 //podium data
 bool changeColor = false;
 
+//scoreboard data
+bool screenColorChange = false;
+
 void InitializeColors() {
     srand(static_cast<unsigned int>(time(0)));
 
@@ -276,7 +279,16 @@ void DrawScoreboard(float x, float y, float z, float thickness, float width, flo
     glPopMatrix();
 
     //inner screen
-    glColor3f(53.0f / 255.0f, 56.0f / 255.0f, 54.0f / 255.0f);//dark grey
+    if(screenColorChange)
+	{
+		float red = static_cast<float>(std::rand()) / RAND_MAX;
+		float green = static_cast<float>(std::rand()) / RAND_MAX;
+		float blue = static_cast<float>(std::rand()) / RAND_MAX;
+		glColor3f(red, green, blue);
+	}
+	else {
+        glColor3f(53.0f / 255.0f, 56.0f / 255.0f, 54.0f / 255.0f);//dark grey
+    }
     glPushMatrix();
     glTranslatef(x, y, z - thickness / 2.0f+0.1f);
     glScaled(width, height, thickness);
@@ -837,6 +849,11 @@ void Keyboard(unsigned char key, int x, int y) {
 		changeColor = !changeColor;
 		if (changeColor)
 		    playSound("color-change.wav",false);
+		break;
+	case '4':
+		screenColorChange = !screenColorChange;
+		if (screenColorChange)
+			playSound("color-change.wav", false);
 		break;
     }
 	printf("my score is %d\n", score);
