@@ -998,6 +998,11 @@ void Render2DText(int score, float timeLeft,bool gameWin, bool gameLose) {
         for (char* c = message; *c != '\0'; c++) {
             glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *c);
         }
+        glRasterPos2f(xCord / 2.0 - 200, yCord / 2.0 - 100);
+        std::string text = "Enjoy Self-made music track";
+        for (char c : text) {
+            glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, c);
+        }
     }
     else if (gameWin) {
         glColor3f(0.1137f, 0.6118f, 0.0980f);
@@ -1007,19 +1012,30 @@ void Render2DText(int score, float timeLeft,bool gameWin, bool gameLose) {
         for (char* c = message; *c != '\0'; c++) {
             glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *c);
         }
+        glRasterPos2f(xCord / 2.0 - 200, yCord / 2.0-100);
+        std::string text = "Enjoy Self-made music track";
+        for (char c : text) {
+            glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, c);
+        }
     }
     else {
         glColor3f(0.0f, 0.0f, 0.0f);
         glRasterPos2f(50.0f, 530.0f);
         std::string scoreText = "Score: " + std::to_string(score);
         for (char c : scoreText) {
-            glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
+            glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, c);
         }
         glColor3f(0.0f, 0.0f, 0.0f);
         glRasterPos2f(50.0f, 500.0f);
         std::string timeText = "Time: " + std::to_string(static_cast<int>(timeLeft));
         for (char c : timeText) {
-            glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
+            glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, c);
+        }
+        glColor3f(0.0f, 0.0f, 0.0f);
+        glRasterPos2f(250.0f, 580.0f);
+        std::string text = "Space bar to shoot, 120 points to win.";
+        for (char c : text) {
+            glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, c);
         }
     }
 	glMatrixMode(GL_PROJECTION);
