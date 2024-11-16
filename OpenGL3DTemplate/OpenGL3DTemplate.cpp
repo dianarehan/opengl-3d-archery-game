@@ -1103,7 +1103,7 @@ void main(int argc, char** argv) {
     UpdateColors(0);
     Update(0);
 	if (!backgroundSound)
-        backgroundSound= engine->play2D("bg_sound.wav", false, false, true);
+        backgroundSound= engine->play2D("bg_sound.wav", true, false, true);
     
     glutMainLoop();
     engine->drop();
