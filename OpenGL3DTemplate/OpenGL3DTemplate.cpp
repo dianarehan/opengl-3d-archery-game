@@ -10,7 +10,6 @@ using namespace irrklang;
 #include <string>
 #include <sstream>
 
-float rotAng;
 //screen size
 int xCord=1000, yCord=700;
 
@@ -90,6 +89,12 @@ bool changeColor = false;
 //scoreboard data
 bool screenColorChange =false;
 
+//fence data
+bool isScalingActive = false;
+float originalScaleFactor = 1.0f;
+float currentScaleFactor = 1.0f;
+bool isScalingUp = true;
+
 void DrawCylinder(float base, float top, float height, int slices, int stacks) {
     GLUquadric* quad = gluNewQuadric();
     gluCylinder(quad, base, top, height, slices, stacks);
@@ -103,6 +108,7 @@ void DrawFence(float x, float y, float z, float poleHeight, float poleRadius, fl
         glPushMatrix();
         float poleX = x + i * spacing;
         glTranslatef(poleX, y + poleHeight / 2, z);
+        glScalef(currentScaleFactor, currentScaleFactor, currentScaleFactor);
         glRotatef(-90, 1.0f, 0.0f, 0.0f);
         DrawCylinder(poleRadius, poleRadius, poleHeight, 16, 8);
         glPopMatrix();
@@ -794,7 +800,22 @@ void Update(int value) {
             }
         }
     }
-
+    if (isScalingActive) {
+        if (isScalingUp) {
+            currentScaleFactor += 0.01f;
+            if (currentScaleFactor >= 1.3f) {
+                currentScaleFactor = 1.3f;
+                isScalingUp = false;
+            }
+        }
+        else {
+            currentScaleFactor -= 0.01f;
+            if (currentScaleFactor <= originalScaleFactor) {
+                currentScaleFactor = originalScaleFactor;
+                isScalingUp = true;
+            }
+        }
+    }
     glutPostRedisplay();
     glutTimerFunc(16, Update, 0);
 }
@@ -882,6 +903,13 @@ void Keyboard(unsigned char key, int x, int y) {
 		if (screenColorChange)
 			playSound("color-change.wav", false);
 		break;
+    case '5':
+        isScalingActive = !isScalingActive;
+        if (!isScalingActive) {
+            currentScaleFactor = originalScaleFactor;
+            isScalingUp = true;
+        }
+        break;
     }
 	printf("my score is %d\n", score);
 	printf("camX: %f, camY: %f, camZ: %f, camYaw: %f, camPitch: %f\n", camX, camY, camZ, camYaw, camPitch);
@@ -1041,7 +1069,7 @@ void Display(void) {
         DrawScoreboard(leftWallX - 0.5, 1.5f, backWallZ - 1, 0.2f, 1.6f, 1.0f);
         DrawPodium(-2.6f, 0.5f, 2.0f, 45.0f);
         DrawTargetArrow();
-        DrawFence(1.5f,0.0f, 5.0f, 1.0f, 0.05f, 0.03f, 0.05f, 4, 0.5f);
+        DrawFence(1.5f,-0.1f, 4.5f, 1.0f, 0.05f, 0.03f, 0.05f, 4, 0.5f);
         Render2DText(score, timeRemaining,false,false);
     }
     glFlush();
@@ -1054,8 +1082,6 @@ void Anim() {
     lastTime = currentTime;
 
     MovePlayer(deltaTime);
-
-    rotAng += 0.01;
     glutPostRedisplay();
 }
 
