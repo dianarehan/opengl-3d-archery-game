@@ -82,6 +82,7 @@ bool isArrowActive = false;
 float arrowPosX, arrowPosY, arrowPosZ;
 float arrowSpeed = 0.1f;
 bool moveQuiver = false;
+bool moveTarget = false;
 
 //podium data
 bool changeColor = false;
@@ -392,7 +393,12 @@ void DrawTarget(float x, float y, float z) {
 }
 
 void UpdateTarget(int value) {
-
+    if (moveTarget) {
+        do {
+            targetPosX = rightWallX+leftWallX +static_cast<float>(rand()) / (static_cast<float>(RAND_MAX) / (rightWallX - leftWallX));
+        } while (targetPosX > rightWallX || targetPosX < leftWallX);
+        moveTarget = false;
+    }
     targetPosX += targetSpeed;
 
     if (targetPosX > rightWallX || targetPosX < leftWallX)
@@ -730,6 +736,7 @@ void Update(int value) {
 			playSound("win1.wav",false);
             if(score>=120)
 			    winGame = true;
+            moveTarget = true;
         }
 
         if (arrowPosZ < -groundSize) {
