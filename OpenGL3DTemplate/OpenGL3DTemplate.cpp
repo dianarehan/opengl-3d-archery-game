@@ -559,7 +559,7 @@ void DrawQuiver(float x, float y, float z) {
 
         glPushMatrix();
         glTranslatef(0, 0,0.7f);
-        glColor3f(1.0f, 0.0f, 0.0f);
+        glColor3f(0.8431f, 0.0314f, 0.0353f);
         gluCylinder(quadratic, 0.05f, 0.0f, 0.1f, 32, 32);
         glPopMatrix();
         glPopMatrix();
