@@ -12,29 +12,29 @@ using namespace irrklang;
 
 float rotAng;
 //screen size
-int xCord = 1000, yCord = 700;
+int xCord=1000, yCord=700;
 
 //ground and wall dimensions
-const float groundSize = 5.0f;
-const float wallHeight = 3.0f;
-const float wallThickness = 0.1f;
-const float ringThickness = 3.0f;
+const float groundSize= 5.0f;
+const float wallHeight= 3.0f;
+const float wallThickness=0.1f;
+const float ringThickness =3.0f;
 
 //wall positions
-float backWallX = 0.0f, backWallY = wallHeight / 2, backWallZ = -groundSize / 2;
-float leftWallX = -groundSize / 2, leftWallY = wallHeight / 2, leftWallZ = 0.0f;
-float rightWallX = groundSize / 2, rightWallY = wallHeight / 2, rightWallZ = 0.0f;
+float backWallX=0.0f, backWallY = wallHeight/2, backWallZ = -groundSize/2;
+float leftWallX=-groundSize/2, leftWallY = wallHeight/2,leftWallZ =0.0f;
+float rightWallX= groundSize/2, rightWallY =wallHeight/2, rightWallZ =0.0f;
 
 //wall colors
 float backWallColor[3];
 float leftWallColor[3];
 float rightWallColor[3];
-float predefinedColors[][3] = {
+float myColors[][3]={
     {0.8f, 0.8f, 0.8f},
     {0.9f, 0.9f, 0.8f},
     {0.8f, 0.7f, 0.7f},
 };
-const int numColors = sizeof(predefinedColors) / sizeof(predefinedColors[0]);
+const int numColors= sizeof(myColors)/sizeof(myColors[0]);
 
 //camera variables for free movement and rotation
 float camX = 0.0f, camY = 2.0f, camZ = 5.5f;
@@ -43,13 +43,13 @@ enum View { FREE_VIEW, TOP_VIEW, SIDE_VIEW, FRONT_VIEW };
 View currentView = FREE_VIEW;
 
 //player position and rotation
-float playerX = 0.0f, playerY = 1.0f, playerZ = 0.0f;
+float playerX = 0.0f,playerY =1.0f, playerZ =0.0f;
 float playerRotation = 0.0f;
 float currentRotation = 0.0f;
-bool moveLeft = false;
-bool moveRight = false;
-bool moveForward = false;
-bool moveBackward = false;
+bool moveLeft=false;
+bool moveRight=false;
+bool moveForward=false;
+bool moveBackward=false;
 
 //functions signatures
 void InitializeGLUT(int argc, char** argv);
@@ -60,23 +60,23 @@ void playSound(const char* soundFile, bool loop=false);
 //sound data
 irrklang::ISoundEngine* engine = irrklang::createIrrKlangDevice();
 irrklang::ISound* backgroundSound = nullptr;
-bool hasPlayedWinSound = false;
-bool hasPlayedLoseSound = false;
+bool hasPlayedWinSound=false;
+bool hasPlayedLoseSound=false;
 
 //game data
-bool isTimeUp = false;
-int score = 0;
-float timeRemaining = 30.0f;
+bool isTimeUp=false;
+int score=0;
+float timeRemaining=30.0f;
 static float elapsedTime = 0.0f;
 bool winGame = false;
 
 //windsock data
-float windDirection = 45.0f;
-float windSpeed = 0.5f;
-bool isMoving = false;
+float windDirection =45.0f;
+float windSpeed =0.5f;
+bool isMoving =false;
 
 //target data
-float targetPosX = 0.0f, targetPosY=1.5, targetPosZ=-3;
+float targetPosX =0.0f, targetPosY=1.5, targetPosZ=-3;
 float targetSpeed = 0.01f;
 bool isArrowActive = false;
 float arrowPosX, arrowPosY, arrowPosZ;
@@ -88,26 +88,26 @@ bool moveTarget = false;
 bool changeColor = false;
 
 //scoreboard data
-bool screenColorChange = false;
+bool screenColorChange =false;
 
 void InitializeColors() {
     srand(static_cast<unsigned int>(time(0)));
 
-    int backWallIndex = rand() % numColors;
+    int backWallIndex =rand()%numColors;
     int leftWallIndex;
     do {
-        leftWallIndex = rand() % numColors;
-    } while (leftWallIndex == backWallIndex);
+        leftWallIndex=rand()%numColors;
+    } while (leftWallIndex== backWallIndex);
 
     int rightWallIndex;
     do {
-        rightWallIndex = rand() % numColors;
-    } while (rightWallIndex == backWallIndex || rightWallIndex == leftWallIndex);
+        rightWallIndex=rand() % numColors;
+    } while (rightWallIndex== backWallIndex||rightWallIndex== leftWallIndex);
 
-    for (int i = 0; i < 3; ++i) {
-        backWallColor[i] = predefinedColors[backWallIndex][i];
-        leftWallColor[i] = predefinedColors[leftWallIndex][i];
-        rightWallColor[i] = predefinedColors[rightWallIndex][i];
+    for (int i = 0; i < 3;++i) {
+        backWallColor[i]=myColors[backWallIndex][i];
+        leftWallColor[i]=myColors[leftWallIndex][i];
+        rightWallColor[i]=myColors[rightWallIndex][i];
     }
 }
 
@@ -124,9 +124,9 @@ void UpdateColors(int value) {
     } while (rightWallIndex == backWallIndex || rightWallIndex == leftWallIndex);
 
     for (int i = 0; i < 3; ++i) {
-        backWallColor[i] = predefinedColors[backWallIndex][i];
-        leftWallColor[i] = predefinedColors[leftWallIndex][i];
-        rightWallColor[i] = predefinedColors[rightWallIndex][i];
+        backWallColor[i] = myColors[backWallIndex][i];
+        leftWallColor[i] = myColors[leftWallIndex][i];
+        rightWallColor[i] = myColors[rightWallIndex][i];
     }
 
     glutTimerFunc(5000, UpdateColors, 0);
