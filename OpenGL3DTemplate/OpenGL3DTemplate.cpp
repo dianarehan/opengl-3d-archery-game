@@ -600,36 +600,45 @@ void DrawBow(float x, float y, float z) {
 
 void MovePlayer(float deltaTime) {
     const float moveSpeed = 2.0f;
-    float moveX = 0.0f;
-    float moveZ = 0.0f;
 
+    float newPlayerX = playerX;
+    float newPlayerZ = playerZ;
     if (moveLeft&&playerX>=-groundSize+6*wallThickness) {
-        moveX -= moveSpeed * deltaTime;
+        newPlayerX -= moveSpeed * deltaTime;
         playerRotation = -90.0f; //left
         currentRotation = playerRotation;
     }
     if (moveRight&&playerX<=groundSize-6*wallThickness) {
-        moveX += moveSpeed * deltaTime;
+        newPlayerX += moveSpeed * deltaTime;
         playerRotation = 90.0f; //right
         currentRotation = playerRotation;
     }
     if (moveForward&&playerZ>=-groundSize+6*wallThickness) {
-        moveZ -= moveSpeed * deltaTime;
+        newPlayerZ -= moveSpeed * deltaTime;
         playerRotation = 180.0f; //(positive Z)
         currentRotation = playerRotation;
     }
     if (moveBackward&&playerZ<=groundSize-6*wallThickness) {
-        moveZ += moveSpeed * deltaTime;
+        newPlayerZ += moveSpeed * deltaTime;
         playerRotation = 0.0; //backward
         currentRotation = playerRotation;
     }
-    if (moveX != 0.0f && moveZ != 0.0f) {
-        moveX = (moveX/ sqrt(moveX*moveX + moveZ*moveZ))*moveSpeed*deltaTime;
-        moveZ = (moveZ/sqrt(moveX*moveX + moveZ*moveZ))*moveSpeed*deltaTime;
+    if (newPlayerX != playerX && newPlayerZ != playerZ) {
+        float moveX = newPlayerX - playerX;
+        float moveZ = newPlayerZ - playerZ;
+        float length = sqrt(moveX * moveX + moveZ * moveZ);
+        moveX = (moveX / length) * moveSpeed * deltaTime;
+        moveZ = (moveZ / length) * moveSpeed * deltaTime;
+        newPlayerX = playerX + moveX;
+        newPlayerZ = playerZ + moveZ;
     }
 
-    playerX += moveX;
-    playerZ += moveZ;
+    float distanceToTarget = sqrt((newPlayerX- targetPosX)*(newPlayerX- targetPosX)+(newPlayerZ- targetPosZ)*(newPlayerZ- targetPosZ));
+    if (distanceToTarget > 0.6f) {
+        playerX = newPlayerX;
+        playerZ = newPlayerZ;
+    }
+
     if(isArrowActive) playerRotation = 180.0;
     else playerRotation=currentRotation; 
 }
