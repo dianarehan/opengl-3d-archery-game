@@ -600,27 +600,36 @@ void DrawBow(float x, float y, float z) {
 
 void MovePlayer(float deltaTime) {
     const float moveSpeed = 2.0f;
+    float moveX = 0.0f;
+    float moveZ = 0.0f;
 
     if (moveLeft&&playerX>=-groundSize+6*wallThickness) {
-        playerX -= moveSpeed * deltaTime;
+        moveX -= moveSpeed * deltaTime;
         playerRotation = -90.0f; //left
         currentRotation = playerRotation;
     }
     if (moveRight&&playerX<=groundSize-6*wallThickness) {
-        playerX += moveSpeed * deltaTime;
+        moveX += moveSpeed * deltaTime;
         playerRotation = 90.0f; //right
         currentRotation = playerRotation;
     }
     if (moveForward&&playerZ>=-groundSize+6*wallThickness) {
-        playerZ -= moveSpeed * deltaTime;
+        moveZ -= moveSpeed * deltaTime;
         playerRotation = 180.0f; //(positive Z)
         currentRotation = playerRotation;
     }
     if (moveBackward&&playerZ<=groundSize-6*wallThickness) {
-        playerZ += moveSpeed * deltaTime;
+        moveZ += moveSpeed * deltaTime;
         playerRotation = 0.0; //backward
         currentRotation = playerRotation;
     }
+    if (moveX != 0.0f && moveZ != 0.0f) {
+        moveX = (moveX/ sqrt(moveX*moveX + moveZ*moveZ))*moveSpeed*deltaTime;
+        moveZ = (moveZ/sqrt(moveX*moveX + moveZ*moveZ))*moveSpeed*deltaTime;
+    }
+
+    playerX += moveX;
+    playerZ += moveZ;
     if(isArrowActive) playerRotation = 180.0;
     else playerRotation=currentRotation; 
 }
