@@ -90,6 +90,33 @@ bool changeColor = false;
 //scoreboard data
 bool screenColorChange =false;
 
+void DrawCylinder(float base, float top, float height, int slices, int stacks) {
+    GLUquadric* quad = gluNewQuadric();
+    gluCylinder(quad, base, top, height, slices, stacks);
+    gluDeleteQuadric(quad);
+}
+
+void DrawFence(float x, float y, float z, float poleHeight, float poleRadius, float barWidth, float barHeight, int numPoles, float spacing) {
+    glColor3f(0.6f, 0.4f, 0.2f); //brown
+
+    for (int i = 0; i < numPoles; i++) {
+        glPushMatrix();
+        float poleX = x + i * spacing;
+        glTranslatef(poleX, y + poleHeight / 2, z);
+        glRotatef(-90, 1.0f, 0.0f, 0.0f);
+        DrawCylinder(poleRadius, poleRadius, poleHeight, 16, 8);
+        glPopMatrix();
+    }
+
+    for (int i = 0; i < 2; i++) {
+        glPushMatrix();
+        glTranslatef(x + (numPoles - 1) * spacing / 2.0f, y + poleHeight * (0.3f + i * 0.4f), z);
+        glScalef(numPoles * spacing, barHeight, poleRadius * 2.0f);
+        glutSolidCube(1.0f);
+        glPopMatrix();
+    }
+}
+
 void InitializeColors() {
     srand(static_cast<unsigned int>(time(0)));
 
@@ -1014,6 +1041,7 @@ void Display(void) {
         DrawScoreboard(leftWallX - 0.5, 1.5f, backWallZ - 1, 0.2f, 1.6f, 1.0f);
         DrawPodium(-2.6f, 0.5f, 2.0f, 45.0f);
         DrawTargetArrow();
+        DrawFence(1.5f,0.0f, 5.0f, 1.0f, 0.05f, 0.03f, 0.05f, 4, 0.5f);
         Render2DText(score, timeRemaining,false,false);
     }
     glFlush();
